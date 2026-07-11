@@ -1,0 +1,236 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Forno Lume — Tretnix START food/hospitality template.
+ *
+ * Palette: cream backgrounds, deep charcoal ink, terracotta primary,
+ * warm olive secondary, muted gold accent. All colors are oklch.
+ * Typography: Fraunces (display serif) + Inter (body sans).
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --font-display: "Fraunces", "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-terracotta: var(--terracotta);
+  --color-olive: var(--olive);
+  --color-gold: var(--gold);
+  --color-line: var(--line);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Brand tokens */
+  --cream: oklch(0.965 0.018 82);
+  --ink: oklch(0.22 0.02 60);
+  --terracotta: oklch(0.58 0.13 42);
+  --olive: oklch(0.48 0.06 115);
+  --gold: oklch(0.78 0.09 82);
+  --line: oklch(0.86 0.02 75);
+
+  /* Semantic */
+  --background: oklch(0.965 0.018 82);
+  --foreground: oklch(0.22 0.02 60);
+  --card: oklch(0.985 0.012 82);
+  --card-foreground: oklch(0.22 0.02 60);
+  --popover: oklch(0.985 0.012 82);
+  --popover-foreground: oklch(0.22 0.02 60);
+  --primary: oklch(0.58 0.13 42);
+  --primary-foreground: oklch(0.985 0.012 82);
+  --secondary: oklch(0.92 0.025 78);
+  --secondary-foreground: oklch(0.28 0.03 60);
+  --muted: oklch(0.93 0.02 78);
+  --muted-foreground: oklch(0.44 0.03 60);
+  --accent: oklch(0.78 0.09 82);
+  --accent-foreground: oklch(0.22 0.02 60);
+  --destructive: oklch(0.55 0.19 28);
+  --destructive-foreground: oklch(0.985 0.012 82);
+  --border: oklch(0.86 0.02 75);
+  --input: oklch(0.86 0.02 75);
+  --ring: oklch(0.58 0.13 42);
+
+  --shadow-warm: 0 20px 60px -30px oklch(0.35 0.08 40 / 0.35);
+  --shadow-soft: 0 8px 30px -12px oklch(0.35 0.06 60 / 0.18);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    font-feature-settings: "ss01";
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: var(--terracotta);
+    color: var(--primary-foreground);
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  max-width: 76rem;
+  @media (min-width: 768px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background-color: var(--terracotta);
+  }
+}
+
+@utility hairline {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right, transparent, var(--line), transparent);
+}
+
+@utility fade-up {
+  animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll reveal — subtle, premium, non-invasive */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Static premium hover for “L'esperienza” cards: subtle lift, no scale. */
+.experience-card {
+  box-shadow: 0 6px 24px -20px oklch(0.35 0.06 60 / 0.2);
+  transform: translateY(0);
+  transition:
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.experience-card-icon,
+.experience-card-title {
+  transition:
+    background-color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .experience-card:hover {
+    transform: translateY(-2px);
+    border-color: oklch(0.58 0.13 42 / 0.32);
+    background-color: oklch(0.985 0.012 82 / 0.78);
+    box-shadow: 0 14px 42px -30px oklch(0.35 0.06 60 / 0.3);
+  }
+
+
+  .experience-card:hover .experience-card-icon {
+    background-color: oklch(0.58 0.13 42 / 0.14);
+  }
+
+  .experience-card:hover .experience-card-title {
+    color: var(--terracotta);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-in {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .fade-up {
+    animation: none !important;
+  }
+  .experience-card,
+  .experience-card:hover {
+    transform: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
