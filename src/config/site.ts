@@ -1,17 +1,50 @@
-// Central config for the Forno Lume demo (Tretnix START template).
-// Change these values to re-skin the demo for another food/hospitality brand.
+// Central configuration for the Forno Lume BUSINESS template (Tretnix).
+// Only global/brand-level data lives here. Editorial content lives in
+// dedicated files (home.ts, about.ts, menu.ts, gallery.ts, testimonials.ts,
+// pages.ts). Contact info, opening hours and navigation stay centralized so
+// the template can be rebranded for another Food/Hospitality client without
+// touching components.
+
+export type MainNavItem = {
+  to: "/" | "/menu" | "/chi-siamo" | "/galleria" | "/contatti";
+  label: string;
+};
+
+export type WeeklyHour = {
+  day: string;
+  short: string;
+  label: string; // human label ("18:30 – 23:00" or "Chiuso")
+  closed?: boolean;
+  opens?: string; // "18:30" — for JSON-LD OpeningHoursSpecification
+  closes?: string; // "23:00"
+  dayOfWeek?:
+    | "Monday"
+    | "Tuesday"
+    | "Wednesday"
+    | "Thursday"
+    | "Friday"
+    | "Saturday"
+    | "Sunday";
+};
 
 export const site = {
+  // Absolute base URL used to build canonical/og:url/og:image. Leave empty
+  // until the BUSINESS domain is configured; helpers will omit absolute
+  // URLs rather than hardcode a placeholder or inherit the START domain.
+  url: "",
+
   brand: {
     name: "Forno Lume",
     tagline: "Cucina semplice, atmosfera calda, dettagli curati.",
     description:
       "Forno Lume è un piccolo locale contemporaneo dove sapori autentici, ingredienti selezionati e accoglienza si incontrano in un'esperienza essenziale ma memorabile.",
+    shortDescription:
+      "Bistrot e pizzeria contemporanea. Forno a legna, cucina di stagione, atmosfera calda.",
     kicker: "Bistrot · Pizzeria · Padova",
   },
+
   contact: {
     whatsappNumber: "+39 000 000 0000",
-    // international format without + or spaces for wa.me
     whatsappLink: "https://wa.me/390000000000",
     whatsappReserveMessage:
       "Ciao! Vorrei prenotare un tavolo da Forno Lume.",
@@ -20,6 +53,11 @@ export const site = {
     email: "info@fornolume.it",
     phone: "+39 000 000 0000",
     address: "Via Roma 24, Padova",
+    streetAddress: "Via Roma 24",
+    postalCode: "35100",
+    city: "Padova",
+    region: "PD",
+    country: "IT",
     hours: "Mar–Dom 18:30–23:00 · Lun chiuso",
     mapTitle: "Mappa: Forno Lume — Via Roma 24, Padova",
     mapEmbedUrl:
@@ -27,107 +65,33 @@ export const site = {
     mapExternalUrl:
       "https://www.google.com/maps/search/?api=1&query=Via%20Roma%2024%2C%20Padova",
   },
-  nav: [
-    { href: "#esperienza", label: "Esperienza" },
-    { href: "#menu", label: "Menu" },
-    { href: "#chi-siamo", label: "Chi siamo" },
-    { href: "#info", label: "Info" },
-    { href: "#faq", label: "FAQ" },
-  ],
-  trust: [
-    { label: "Ingredienti selezionati" },
-    { label: "Impasti curati" },
-    { label: "Atmosfera accogliente" },
-    { label: "Prenotazione veloce" },
-  ],
-  offer: [
-    {
-      title: "Cucina di stagione",
-      body: "Piatti semplici, ingredienti scelti e preparazioni curate per valorizzare ogni periodo dell'anno.",
-      detail: "Materie prime locali",
-    },
-    {
-      title: "Pizza e lievitati",
-      body: "Impasti lavorati con attenzione, cotture fragranti e abbinamenti essenziali ma riconoscibili.",
-      detail: "Forno a legna",
-    },
-    {
-      title: "Aperitivi e serate",
-      body: "Un ambiente caldo dove fermarsi per un calice, condividere qualcosa di buono e vivere la serata con calma.",
-      detail: "Carta dei vini curata",
-    },
-  ],
-  menu: [
-    {
-      name: "Margherita del Forno",
-      desc: "Pomodoro San Marzano, fior di latte, basilico, olio EVO.",
-      price: "10",
-    },
-    {
-      name: "Burrata, pomodorini e basilico",
-      desc: "Burrata pugliese, datterino confit, foglie di basilico fresco.",
-      price: "12",
-    },
-    {
-      name: "Tagliere della casa",
-      desc: "Selezione di salumi e formaggi con mostarde e pane caldo.",
-      price: "16",
-    },
-    {
-      name: "Verdure arrostite e crema alle erbe",
-      desc: "Ortaggi di stagione al forno con emulsione di erbe fresche.",
-      price: "11",
-    },
-    {
-      name: "Dolce del giorno",
-      desc: "Preparazione artigianale, cambia con la stagione.",
-      price: "7",
-    },
-    {
-      name: "Calice selezione della casa",
-      desc: "Rossi, bianchi e bollicine dalla nostra carta rotante.",
-      price: "6",
-    },
-  ],
-  experience: [
-    {
-      step: "01",
-      title: "Scegli il momento",
-      body: "Decidi quando passare da noi: per una cena tranquilla, un aperitivo o una serata informale.",
-    },
-    {
-      step: "02",
-      title: "Prenota con un messaggio",
-      body: "Scrivici su WhatsApp e ti confermiamo disponibilità, orario e dettagli.",
-    },
-    {
-      step: "03",
-      title: "Vivi l'esperienza",
-      body: "Arriva, siediti e goditi cucina semplice, servizio attento e atmosfera calda.",
-    },
-  ],
-  faq: [
-    {
-      q: "È consigliata la prenotazione?",
-      a: "Sì, soprattutto nel weekend. Puoi scriverci su WhatsApp per verificare disponibilità e orari.",
-    },
-    {
-      q: "Fate anche asporto?",
-      a: "Sì, alcune proposte sono disponibili anche da asporto. Scrivici per sapere cosa è disponibile oggi.",
-    },
-    {
-      q: "Avete opzioni vegetariane?",
-      a: "Sì, il menu include proposte vegetariane e piatti stagionali. La disponibilità può cambiare in base agli ingredienti.",
-    },
-    {
-      q: "Posso organizzare una piccola cena di gruppo?",
-      a: "Sì, accogliamo piccoli gruppi su prenotazione. Contattaci in anticipo così possiamo organizzare al meglio tavoli e orari.",
-    },
-    {
-      q: "Come posso contattarvi?",
-      a: "Il modo più veloce è WhatsApp. In alternativa puoi scriverci via email o chiamarci negli orari di apertura.",
-    },
-  ],
+
+  mainNav: [
+    { to: "/", label: "Home" },
+    { to: "/menu", label: "Menu" },
+    { to: "/chi-siamo", label: "Chi siamo" },
+    { to: "/galleria", label: "Galleria" },
+    { to: "/contatti", label: "Contatti" },
+  ] satisfies readonly MainNavItem[],
+
+  primaryCta: {
+    label: "Prenota",
+    // "whatsapp" | "tel" — component decides how to render the link
+    kind: "whatsapp" as const,
+  },
+
+  hoursWeekly: [
+    { day: "Lunedì",   short: "Lun", label: "Chiuso", closed: true, dayOfWeek: "Monday" },
+    { day: "Martedì",  short: "Mar", label: "18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Tuesday" },
+    { day: "Mercoledì",short: "Mer", label: "18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Wednesday" },
+    { day: "Giovedì",  short: "Gio", label: "18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Thursday" },
+    { day: "Venerdì",  short: "Ven", label: "18:30 – 23:30", opens: "18:30", closes: "23:30", dayOfWeek: "Friday" },
+    { day: "Sabato",   short: "Sab", label: "12:30 – 15:00 · 18:30 – 23:30", opens: "18:30", closes: "23:30", dayOfWeek: "Saturday" },
+    { day: "Domenica", short: "Dom", label: "12:30 – 15:00 · 18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Sunday" },
+  ] satisfies readonly WeeklyHour[],
+
+  social: [] as ReadonlyArray<{ label: string; href: string }>,
+
   legal: {
     company: "Forno Lume",
     lastUpdate: "Gennaio 2026",
@@ -143,3 +107,8 @@ export const mailLink = (subject?: string) =>
   `mailto:${site.contact.email}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`;
 
 export const telLink = () => `tel:${site.contact.phone.replace(/\s/g, "")}`;
+
+export const primaryCtaHref = (message?: string) =>
+  site.primaryCta.kind === "whatsapp"
+    ? waLink(message ?? site.contact.whatsappReserveMessage)
+    : telLink();

@@ -1,21 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "@/components/site/PolicyLayout";
 import { site } from "@/config/site";
+import { pagesMeta } from "@/config/pages";
+import { seoMeta, seoLinks } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy policy | Forno Lume" },
-      {
-        name: "description",
-        content:
-          "Informativa privacy del sito demo Forno Lume. Nessun database, nessun login, nessun pagamento online.",
-      },
+      ...seoMeta({
+        title: pagesMeta.privacy.title,
+        description: pagesMeta.privacy.description,
+        path: "/privacy",
+      }),
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Privacy policy | Forno Lume" },
-      { property: "og:url", content: "/privacy" },
     ],
-    links: [{ rel: "canonical", href: "/privacy" }],
+    links: seoLinks("/privacy"),
   }),
   component: PrivacyPage,
 });
@@ -24,13 +23,13 @@ function PrivacyPage() {
   return (
     <PolicyLayout
       title="Privacy policy"
-      intro="Questa pagina descrive come vengono trattate le informazioni all'interno di questo sito demo. È un placeholder pensato per essere adattato per un'attività reale."
+      intro="Questa pagina descrive come vengono trattate le informazioni all'interno di questo sito. È un placeholder pensato per essere adattato all'attività reale."
     >
       <h2>Natura di questo sito</h2>
       <p>
-        Questo è un sito demo/template realizzato da Tretnix. I contenuti,
-        i nomi, i numeri di telefono, gli indirizzi email e le immagini sono
-        placeholder e vanno adattati al cliente reale prima della pubblicazione.
+        Il sito di {site.legal.company} è un sito informativo: presenta il
+        locale, il menu, la galleria e i contatti. Non gestisce prenotazioni
+        online reali, non memorizza ordini e non ospita un'area riservata.
       </p>
 
       <h2>Cosa il sito non fa</h2>

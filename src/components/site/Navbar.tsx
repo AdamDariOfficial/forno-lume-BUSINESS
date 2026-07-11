@@ -1,66 +1,38 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
-import { site, waLink } from "@/config/site";
-import { scrollToSection } from "@/lib/nav";
+import { site, primaryCtaHref } from "@/config/site";
 
-function idFromHref(href: string): string | null {
-  const i = href.indexOf("#");
-  return i >= 0 ? href.slice(i + 1) : null;
-}
-
+// Navbar
+// - Route-based (no scroll-spy on hash anchors).
+// - On the homepage keeps the validated "hidden inside hero, appears after
+//   the hero threshold" behavior.
+// - On every other route it is visible immediately.
+// - Home link uses exact matching (so it isn't active on /menu, etc.).
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
+  const [heroVisible, setHeroVisible] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const navigate = useNavigate();
   const rafRef = useRef<number | null>(null);
 
   const isHome = pathname === "/";
 
-  // Scroll-spy + visibility (home only). Elsewhere navbar is always visible.
+  // Homepage-only: navbar is hidden until the user has scrolled past ~35%
+  // of the viewport, then appears with a soft transition (validated
+  // behavior from START).
   useEffect(() => {
     if (!isHome) {
-      setVisible(true);
-      setActive(null);
+      setHeroVisible(true);
       return;
     }
 
-    const ids = site.nav
-      .map((n) => idFromHref(n.href))
-      .filter((v): v is string => !!v);
+    setHeroVisible(false);
 
     const compute = () => {
       rafRef.current = null;
       const y = window.scrollY;
-      const activation = y + window.innerHeight * 0.35;
-
-      const sections = ids
-        .map((id) => {
-          const el = document.getElementById(id);
-          if (!el) return null;
-          return { id, top: el.getBoundingClientRect().top + y };
-        })
-        .filter((s): s is { id: string; top: number } => !!s)
-        .sort((a, b) => a.top - b.top);
-
-      const first = sections[0];
-
-      if (!first || activation < first.top - 8) {
-        // still in hero
-        setVisible(false);
-        setActive(null);
-        return;
-      }
-
-      setVisible(true);
-      let current: string | null = null;
-      for (const s of sections) {
-        if (s.top <= activation) current = s.id;
-        else break;
-      }
-      setActive(current);
+      const threshold = window.innerHeight * 0.35;
+      setHeroVisible(y >= threshold);
     };
 
     const onScroll = () => {
@@ -78,7 +50,7 @@ export function Navbar() {
     };
   }, [isHome]);
 
-  // Close drawer when resizing to desktop
+  // Close drawer when resizing to desktop.
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     const onChange = (e: MediaQueryListEvent) => {
@@ -88,7 +60,12 @@ export function Navbar() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Lock body scroll while drawer is open
+  // Close drawer on route change.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll while drawer is open.
   useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -100,24 +77,8 @@ export function Navbar() {
   }, [open]);
 
   const close = () => setOpen(false);
-
-  const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string,
-  ) => {
-    const id = idFromHref(href);
-    if (!id) return;
-    e.preventDefault();
-    close();
-    if (isHome) {
-      scrollToSection(id);
-    } else {
-      navigate({ to: "/", state: { scrollTo: id } as never });
-    }
-  };
-
-  // Force visible whenever the drawer is open, regardless of scroll position.
-  const shown = visible || open || !isHome;
+  // Drawer forces visibility regardless of scroll position.
+  const shown = heroVisible || open || !isHome;
 
   return (
     <header
@@ -128,52 +89,44 @@ export function Navbar() {
           : "opacity-0 -translate-y-full pointer-events-none"
       } motion-reduce:transition-opacity motion-reduce:transform-none`}
     >
-
       <div className="container-page flex h-16 items-center justify-between md:h-20">
         <Link
           to="/"
           onClick={close}
           className="flex items-center gap-2 font-display text-xl tracking-tight sm:text-2xl"
+          aria-label={`${site.brand.name} — Home`}
         >
           <span className="inline-block h-2 w-2 rounded-full bg-terracotta" />
           {site.brand.name}
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Sezioni">
-          {site.nav.map((n) => {
-            const id = idFromHref(n.href);
-            const isActive = !!id && active === id;
-            return (
-              <a
-                key={n.href}
-                href={n.href}
-                onClick={(e) => handleNavClick(e, n.href)}
-                aria-current={isActive ? "true" : undefined}
-                className={`relative text-sm transition-colors ${
-                  isActive
-                    ? "text-terracotta"
-                    : "text-foreground/80 hover:text-terracotta"
-                }`}
-              >
-                {n.label}
-                <span
-                  aria-hidden
-                  className={`pointer-events-none absolute -bottom-1.5 left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-terracotta transition-all duration-300 ${
-                    isActive ? "w-4 opacity-100" : "w-0 opacity-0"
-                  }`}
-                />
-              </a>
-            );
-          })}
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigazione principale">
+          {site.mainNav.map((n) => (
+            <Link
+              key={n.to}
+              to={n.to}
+              activeOptions={n.to === "/" ? { exact: true } : undefined}
+              activeProps={{
+                className:
+                  "relative text-sm text-terracotta after:absolute after:-bottom-1.5 after:left-1/2 after:h-[2px] after:w-4 after:-translate-x-1/2 after:rounded-full after:bg-terracotta after:content-['']",
+              }}
+              inactiveProps={{
+                className:
+                  "relative text-sm text-foreground/80 transition-colors hover:text-terracotta",
+              }}
+            >
+              {n.label}
+            </Link>
+          ))}
         </nav>
 
         <a
-          href={waLink(site.contact.whatsappReserveMessage)}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={primaryCtaHref()}
+          target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
+          rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
           className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 md:inline-flex"
         >
-          Prenota un tavolo
+          {site.primaryCta.label}
         </a>
 
         <button
@@ -217,40 +170,35 @@ export function Navbar() {
       >
         <div className="container-page pb-6 pt-2">
           <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-warm)]">
-            <nav className="flex flex-col" aria-label="Sezioni mobile">
-              {site.nav.map((n, i) => {
-                const id = idFromHref(n.href);
-                const isActive = !!id && active === id;
-                return (
-                  <a
-                    key={n.href}
-                    href={n.href}
-                    onClick={(e) => handleNavClick(e, n.href)}
-                    aria-current={isActive ? "true" : undefined}
-                    style={{ transitionDelay: `${open ? i * 40 : 0}ms` }}
-                    className={`flex items-center justify-between border-b border-border/60 py-4 text-base transition-all duration-300 last:border-b-0 ${
-                      open ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
-                    } ${isActive ? "text-terracotta" : ""}`}
-                  >
-                    <span>{n.label}</span>
-                    {isActive && (
-                      <span
-                        aria-hidden
-                        className="h-1.5 w-1.5 rounded-full bg-terracotta"
-                      />
-                    )}
-                  </a>
-                );
-              })}
+            <nav className="flex flex-col" aria-label="Navigazione mobile">
+              {site.mainNav.map((n, i) => (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  activeOptions={n.to === "/" ? { exact: true } : undefined}
+                  onClick={close}
+                  style={{ transitionDelay: `${open ? i * 40 : 0}ms` }}
+                  activeProps={{
+                    className:
+                      "flex items-center justify-between border-b border-border/60 py-4 text-base text-terracotta transition-all duration-300 last:border-b-0",
+                  }}
+                  inactiveProps={{
+                    className:
+                      "flex items-center justify-between border-b border-border/60 py-4 text-base transition-all duration-300 last:border-b-0",
+                  }}
+                >
+                  <span>{n.label}</span>
+                </Link>
+              ))}
             </nav>
             <a
-              href={waLink(site.contact.whatsappReserveMessage)}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={primaryCtaHref()}
+              target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
+              rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
               onClick={close}
               className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)]"
             >
-              Prenota un tavolo
+              {site.primaryCta.label}
             </a>
           </div>
         </div>
