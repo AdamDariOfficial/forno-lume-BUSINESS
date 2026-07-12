@@ -28,10 +28,8 @@ export type WeeklyHour = {
 };
 
 export const site = {
-  // Absolute base URL used to build canonical/og:url/og:image. Leave empty
-  // until the BUSINESS domain is configured; helpers will omit absolute
-  // URLs rather than hardcode a placeholder or inherit the START domain.
-  url: "",
+  // Absolute base URL used to build canonical/og:url/og:image.
+  url: "https://forno-lume-business.tretnix.com",
 
   brand: {
     name: "Forno Lume",

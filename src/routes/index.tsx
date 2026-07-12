@@ -24,6 +24,7 @@ import { TestimonialCard } from "@/components/site/TestimonialCard";
 import { FAQAccordion } from "@/components/site/FAQAccordion";
 import { CTASection } from "@/components/site/CTASection";
 import { MapEmbed } from "@/components/site/MapEmbed";
+import { OpeningHours } from "@/components/site/OpeningHours";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -51,7 +52,6 @@ function HomePage() {
       <IntroSection />
       <SignaturePreview />
       <ExperienceTrio />
-      <AboutPreview />
       <GalleryPreview />
       <TestimonialsSection />
       <PracticalPreview />
@@ -168,29 +168,42 @@ function TrustStrip() {
   );
 }
 
-/* Intro */
+/* Intro — assorbe il teaser "Chi siamo": include immagine editoriale
+   e CTA verso /chi-siamo. */
 function IntroSection() {
   return (
     <section className="container-page py-20 md:py-28">
-      <div className="grid gap-10 md:grid-cols-12">
-        <div className="md:col-span-5">
+      <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
+        <div className="md:col-span-7">
           <SectionHeading
             eyebrow={homeContent.intro.eyebrow}
             title={homeContent.intro.title}
           />
-        </div>
-        <div className="md:col-span-7 md:pt-4">
-          <p className="text-base text-muted-foreground md:text-lg">
+          <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
             {homeContent.intro.body}
           </p>
           <Link
             to="/chi-siamo"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-terracotta transition hover:opacity-80"
+            className="group mt-8 inline-flex items-center gap-2 text-sm font-medium text-terracotta transition-colors hover:text-terracotta/80"
           >
-            {homeContent.intro.linkLabel}
-            <ArrowUpRight className="h-4 w-4" />
+            <span className="border-b border-terracotta/40 pb-0.5 transition-colors group-hover:border-terracotta">
+              {homeContent.intro.linkLabel}
+            </span>
+            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
+        <Reveal className="md:col-span-5">
+          <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
+            <img
+              src={aboutImg}
+              alt="Le mani di un fornaio lavorano l'impasto su un tagliere infarinato"
+              loading="lazy"
+              width={1408}
+              height={1600}
+              className="h-72 w-full object-cover md:h-[440px]"
+            />
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -314,44 +327,6 @@ function ExperienceTrio() {
   );
 }
 
-/* About preview */
-function AboutPreview() {
-  return (
-    <section className="container-page py-20 md:py-28">
-      <div className="grid gap-12 md:grid-cols-12 md:gap-16">
-        <div className="md:col-span-6">
-          <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
-            <img
-              src={aboutImg}
-              alt="Le mani di un fornaio lavorano l'impasto su un tagliere infarinato"
-              loading="lazy"
-              width={1408}
-              height={1600}
-              className="h-[420px] w-full object-cover md:h-[560px]"
-            />
-          </div>
-        </div>
-        <div className="md:col-span-6 md:pt-6">
-          <SectionHeading
-            eyebrow={homeContent.aboutPreview.eyebrow}
-            title={homeContent.aboutPreview.title}
-          />
-          <p className="mt-6 text-base text-muted-foreground md:text-lg">
-            {homeContent.aboutPreview.body}
-          </p>
-          <Link
-            to="/chi-siamo"
-            className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium transition hover:bg-secondary"
-          >
-            Scopri la nostra storia
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* Gallery preview */
 function GalleryPreview() {
   return (
@@ -394,7 +369,7 @@ function TestimonialsSection() {
   );
 }
 
-/* Practical info preview */
+/* Practical info preview — tabella completa degli orari + mappa. */
 function PracticalPreview() {
   return (
     <section className="container-page py-20 md:py-28">
@@ -402,18 +377,15 @@ function PracticalPreview() {
         <div className="md:col-span-5">
           <SectionHeading
             eyebrow="Informazioni pratiche"
-            title="Dove siamo, quando siamo aperti."
+            title={"Dove siamo, \nquando siamo aperti."}
           />
-          <ul className="mt-8 space-y-4 text-sm">
-            <li className="flex items-start gap-3">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-              <span>{site.contact.address}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-              <span>{site.contact.hours}</span>
-            </li>
-          </ul>
+          <p className="mt-6 text-sm text-muted-foreground md:text-[15px]">
+            Cucina aperta dal martedì alla domenica. Nel weekend consigliamo
+            di prenotare in anticipo.
+          </p>
+          <div className="mt-8 rounded-2xl border border-border bg-card/60 p-5 md:p-6">
+            <OpeningHours />
+          </div>
           <Link
             to="/contatti"
             className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium transition hover:bg-secondary"
@@ -424,6 +396,10 @@ function PracticalPreview() {
         </div>
         <div className="min-w-0 md:col-span-7">
           <MapEmbed />
+          <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
+            <span>{site.contact.address}</span>
+          </p>
         </div>
       </div>
     </section>

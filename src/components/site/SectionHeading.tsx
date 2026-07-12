@@ -26,6 +26,7 @@ export function SectionHeading({
         {lines.map((l, i) => (
           <span key={i} className="block">
             {l}
+            {i < lines.length - 1 ? " " : ""}
           </span>
         ))}
         {accent && (

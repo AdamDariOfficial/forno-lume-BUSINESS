@@ -13,6 +13,8 @@ export function MenuCategoryNav({
 }) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? "");
   const listRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
+  const didInitialScroll = useRef(false);
 
   useEffect(() => {
     const ids = categories.map((c) => c.id);
@@ -40,6 +42,32 @@ export function MenuCategoryNav({
     return () => io.disconnect();
   }, [categories, offsetPx]);
 
+  // Keep the active category visible inside the horizontally-scrollable
+  // bar. Skip the very first run so we do not scroll the page on mount.
+  useEffect(() => {
+    if (!didInitialScroll.current) {
+      didInitialScroll.current = true;
+      return;
+    }
+    const el = itemRefs.current.get(active);
+    const container = listRef.current;
+    if (!el || !container) return;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const elRect = el.getBoundingClientRect();
+    const cRect = container.getBoundingClientRect();
+    const target =
+      container.scrollLeft +
+      (elRect.left - cRect.left) -
+      cRect.width / 2 +
+      elRect.width / 2;
+    container.scrollTo({
+      left: Math.max(target, 0),
+      behavior: reduced ? "auto" : "smooth",
+    });
+  }, [active]);
+
   const handleClick = (id: string) => (e: React.MouseEvent) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -54,19 +82,33 @@ export function MenuCategoryNav({
   };
 
   return (
-    <div className="sticky top-16 z-30 -mx-5 md:top-20 md:mx-0">
-      <div className="border-y border-border bg-background/95 backdrop-blur">
+    <div className="sticky top-16 z-30 md:top-20">
+      <div className="relative border-y border-border bg-background/95 backdrop-blur">
+        {/* Edge fades — hint at scrollability without covering text */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-background to-transparent md:hidden"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-background to-transparent md:hidden"
+        />
         <div
           ref={listRef}
-          className="container-page overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="overflow-x-auto overflow-y-hidden overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollPaddingInline: "1.25rem" }}
         >
           <nav aria-label="Categorie del menu">
-            <ul className="flex min-w-max gap-6 py-3.5 md:gap-8">
+            <ul className="flex w-max gap-6 px-5 py-3.5 md:mx-auto md:max-w-6xl md:gap-8 md:px-8">
               {categories.map((c) => {
                 const isActive = c.id === active;
                 return (
-                  <li key={c.id}>
+                  <li key={c.id} className="shrink-0">
                     <a
+                      ref={(node) => {
+                        if (node) itemRefs.current.set(c.id, node);
+                        else itemRefs.current.delete(c.id);
+                      }}
                       href={`#${c.id}`}
                       onClick={handleClick(c.id)}
                       aria-current={isActive ? "true" : undefined}
