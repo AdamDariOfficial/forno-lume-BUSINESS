@@ -31,6 +31,7 @@ export function PageHero({
           {lines.map((l, i) => (
             <span key={i} className="block">
               {l}
+              {i < lines.length - 1 ? " " : ""}
             </span>
           ))}
         </h1>
