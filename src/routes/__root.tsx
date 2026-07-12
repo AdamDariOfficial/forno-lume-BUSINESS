@@ -15,6 +15,9 @@ import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 import { site } from "../config/site";
 
+const SITE_TITLE = `${site.brand.name} — ${site.brand.kicker}`;
+const SITE_DESC = site.brand.shortDescription;
+
 function NotFoundComponent() {
   return (
     <div className="min-h-screen bg-background">
@@ -104,14 +107,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: site.brand.name },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "it_IT" },
-      { title: "Lovable App" },
-      { property: "og:title", content: "Lovable App" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "description", content: "Forno Lume is a premium, mobile-first landing page template for food and hospitality businesses." },
-      { property: "og:description", content: "Forno Lume is a premium, mobile-first landing page template for food and hospitality businesses." },
-      { name: "twitter:description", content: "Forno Lume is a premium, mobile-first landing page template for food and hospitality businesses." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dbb209f1-dea6-4274-8111-bca2598954e3/id-preview-3792b5ed--271eb6c3-91f1-4574-9ab4-7b6f98b9d9cf.lovable.app-1783772385066.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dbb209f1-dea6-4274-8111-bca2598954e3/id-preview-3792b5ed--271eb6c3-91f1-4574-9ab4-7b6f98b9d9cf.lovable.app-1783772385066.png" },
+      { title: SITE_TITLE },
+      { property: "og:title", content: SITE_TITLE },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "description", content: SITE_DESC },
+      { property: "og:description", content: SITE_DESC },
+      { name: "twitter:description", content: SITE_DESC },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
