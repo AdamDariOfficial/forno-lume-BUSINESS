@@ -56,7 +56,14 @@ export function GalleryLightbox({
       aria-modal="true"
       aria-label={`Immagine ${index + 1} di ${images.length}: ${img.alt}`}
       onClick={onClose}
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/85 backdrop-blur-sm p-4 sm:p-8"
+      className="fixed inset-0 z-[80] bg-ink/85 backdrop-blur-sm"
+      style={{
+        height: "100dvh",
+        paddingTop: "calc(env(safe-area-inset-top) + 0.75rem)",
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)",
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
+      }}
     >
       <button
         ref={closeBtnRef}
@@ -66,7 +73,7 @@ export function GalleryLightbox({
           onClose();
         }}
         aria-label="Chiudi lightbox"
-        className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-background/90 text-foreground shadow transition hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
+        className="absolute right-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full bg-background/95 text-foreground shadow transition hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta sm:right-6 sm:top-6"
       >
         <X className="h-5 w-5" />
       </button>
@@ -78,7 +85,7 @@ export function GalleryLightbox({
           goPrev();
         }}
         aria-label="Immagine precedente"
-        className="absolute left-2 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground shadow transition hover:bg-background sm:left-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
+        className="absolute left-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/95 text-foreground shadow transition hover:bg-background sm:left-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -90,23 +97,23 @@ export function GalleryLightbox({
           goNext();
         }}
         aria-label="Immagine successiva"
-        className="absolute right-2 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground shadow transition hover:bg-background sm:right-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
+        className="absolute right-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/95 text-foreground shadow transition hover:bg-background sm:right-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
 
       <figure
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-[90vh] max-w-[92vw]"
+        className="mx-auto flex h-full max-w-[92vw] flex-col items-center justify-center gap-3 px-16 sm:px-20"
       >
         <img
           src={img.src}
           alt={img.alt}
           width={img.w}
           height={img.h}
-          className="mx-auto max-h-[85vh] w-auto rounded-lg object-contain"
+          className="max-h-[calc(100dvh-8rem)] w-auto max-w-full rounded-lg object-contain"
         />
-        <figcaption className="mt-3 text-center text-sm text-background/80">
+        <figcaption className="text-center text-sm text-background/80">
           {img.alt}
         </figcaption>
       </figure>
