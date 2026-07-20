@@ -174,7 +174,7 @@ function IntroSection() {
   return (
     <section className="container-page py-20 md:py-28">
       <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-        <div className="md:col-span-7">
+        <div className="md:order-2 md:col-span-7">
           <SectionHeading
             eyebrow={homeContent.intro.eyebrow}
             title={homeContent.intro.title}
@@ -192,7 +192,7 @@ function IntroSection() {
             <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
-        <Reveal className="md:col-span-5">
+        <Reveal className="md:order-1 md:col-span-5">
           <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
             <img
               src={aboutImg}
