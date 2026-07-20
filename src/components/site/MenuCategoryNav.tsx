@@ -52,9 +52,7 @@ export function MenuCategoryNav({
     const el = itemRefs.current.get(active);
     const container = listRef.current;
     if (!el || !container) return;
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const elRect = el.getBoundingClientRect();
     const cRect = container.getBoundingClientRect();
     const target =
@@ -67,19 +65,6 @@ export function MenuCategoryNav({
       behavior: reduced ? "auto" : "smooth",
     });
   }, [active]);
-
-  const handleClick = (id: string) => (e: React.MouseEvent) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    e.preventDefault();
-    const top = el.getBoundingClientRect().top + window.scrollY - offsetPx;
-    window.scrollTo({
-      top: Math.max(top, 0),
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
-    });
-  };
 
   return (
     <div className="sticky top-16 z-30 md:top-20">
@@ -110,7 +95,6 @@ export function MenuCategoryNav({
                         else itemRefs.current.delete(c.id);
                       }}
                       href={`#${c.id}`}
-                      onClick={handleClick(c.id)}
                       aria-current={isActive ? "true" : undefined}
                       className={`inline-block whitespace-nowrap border-b-2 pb-1 text-sm transition-colors ${
                         isActive
