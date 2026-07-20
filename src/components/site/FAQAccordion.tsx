@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { Reveal } from "./Reveal";
 
 // Single-open accordion. Same visual + a11y contract as the START version.
 export function FAQAccordion({
@@ -17,7 +18,7 @@ export function FAQAccordion({
         const panelId = `faq-panel-${i}`;
         const btnId = `faq-btn-${i}`;
         return (
-          <li key={f.q}>
+          <Reveal as="li" key={f.q} delay={Math.min(i * 70, 280)}>
             <button
               id={btnId}
               type="button"
@@ -52,7 +53,7 @@ export function FAQAccordion({
                 </p>
               </div>
             </div>
-          </li>
+          </Reveal>
         );
       })}
     </ul>

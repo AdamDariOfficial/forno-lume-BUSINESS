@@ -467,9 +467,9 @@ function FAQPreview() {
               </p>
             </Reveal>
           </div>
-          <Reveal delay={160} className="md:col-span-8">
+          <div className="md:col-span-8">
             <FAQAccordion items={homeContent.faq} />
-          </Reveal>
+          </div>
         </div>
       </div>
     </section>

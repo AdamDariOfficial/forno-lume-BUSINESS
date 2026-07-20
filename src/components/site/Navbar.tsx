@@ -227,7 +227,7 @@ export function Navbar() {
         id="mobile-nav"
         aria-hidden={open ? undefined : true}
         inert={!open}
-        className={`absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-[max-height,opacity,transform] duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none md:hidden ${
+        className={`absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-[max-height,opacity,translate,transform] duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none md:hidden ${
           open
             ? "max-h-[80vh] opacity-100 translate-y-0"
             : "max-h-0 opacity-0 -translate-y-2"
@@ -236,25 +236,46 @@ export function Navbar() {
         <div className="container-page pb-6 pt-2">
           <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-warm)]">
             <nav className="flex flex-col" aria-label="Navigazione mobile">
-              {site.mainNav.map((n, i) => (
-                <Link
-                  ref={i === 0 ? firstDrawerLinkRef : undefined}
-                  key={n.to}
-                  to={n.to}
-                  activeOptions={n.to === "/" ? { exact: true } : undefined}
-                  onClick={() => close(false)}
-                  activeProps={{
-                    className:
-                      "flex items-center justify-between border-b border-border/60 py-4 text-base text-terracotta transition-colors duration-300 last:border-b-0",
-                  }}
-                  inactiveProps={{
-                    className:
-                      "flex items-center justify-between border-b border-border/60 py-4 text-base transition-colors duration-300 last:border-b-0",
-                  }}
-                >
-                  <span>{n.label}</span>
-                </Link>
-              ))}
+              {site.mainNav.map((n, i) => {
+                const isActive = pathname === n.to;
+                const linkBorderClass =
+                  i === site.mainNav.length - 1
+                    ? "border-b-0"
+                    : "border-b border-border/60";
+
+                return (
+                  <div
+                    key={n.to}
+                    className={`transition-[opacity,translate] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-x-0 motion-reduce:transition-none ${
+                      open ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
+                    }`}
+                    style={{ transitionDelay: open ? `${i * 40}ms` : "0ms" }}
+                  >
+                    <Link
+                      ref={i === 0 ? firstDrawerLinkRef : undefined}
+                      to={n.to}
+                      activeOptions={n.to === "/" ? { exact: true } : undefined}
+                      onClick={() => close(false)}
+                      activeProps={{
+                        className:
+                          `flex items-center justify-between ${linkBorderClass} py-4 text-base text-terracotta transition-colors duration-300`,
+                      }}
+                      inactiveProps={{
+                        className:
+                          `flex items-center justify-between ${linkBorderClass} py-4 text-base transition-colors duration-300`,
+                      }}
+                    >
+                      <span>{n.label}</span>
+                      {isActive && (
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 rounded-full bg-terracotta"
+                        />
+                      )}
+                    </Link>
+                  </div>
+                );
+              })}
             </nav>
             <a
               href={primaryCtaHref()}

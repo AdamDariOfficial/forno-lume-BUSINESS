@@ -32,10 +32,7 @@ function ContactPage() {
         subtitle="Il modo più veloce per prenotare è WhatsApp. Ti rispondiamo in breve tempo con disponibilità e orario."
       />
 
-      <section
-        className="container-page fade-up pb-8"
-        style={{ animationDelay: "240ms" }}
-      >
+      <section className="container-page pb-8">
         <ContactActions />
       </section>
 

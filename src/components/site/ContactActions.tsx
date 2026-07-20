@@ -1,10 +1,11 @@
 import { MessageCircle, Phone, MapPin } from "lucide-react";
 import { site, waLink, telLink } from "@/config/site";
+import { Reveal } from "./Reveal";
 
 export function ContactActions() {
   return (
     <ul className="grid gap-3 sm:grid-cols-3">
-      <li>
+      <Reveal as="li">
         <a
           href={waLink(site.contact.whatsappReserveMessage)}
           target="_blank"
@@ -23,8 +24,8 @@ export function ContactActions() {
             </span>
           </span>
         </a>
-      </li>
-      <li>
+      </Reveal>
+      <Reveal as="li" delay={70}>
         <a
           href={telLink()}
           className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition-[border-color,background-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-terracotta/40 hover:bg-secondary/40"
@@ -41,8 +42,8 @@ export function ContactActions() {
             </span>
           </span>
         </a>
-      </li>
-      <li>
+      </Reveal>
+      <Reveal as="li" delay={140}>
         <a
           href={site.contact.mapExternalUrl}
           target="_blank"
@@ -61,7 +62,7 @@ export function ContactActions() {
             </span>
           </span>
         </a>
-      </li>
+      </Reveal>
     </ul>
   );
 }
