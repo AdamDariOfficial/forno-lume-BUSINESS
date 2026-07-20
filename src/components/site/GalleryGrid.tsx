@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { GalleryImage } from "@/config/gallery";
 import { GalleryLightbox } from "./GalleryLightbox";
 
@@ -6,6 +6,7 @@ import { GalleryLightbox } from "./GalleryLightbox";
 // Clicking a tile opens the lightbox.
 export function GalleryGrid({ images }: { images: GalleryImage[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
 
   const spanClass = (span?: GalleryImage["span"]) => {
     if (span === "wide") return "sm:col-span-2";
@@ -20,7 +21,10 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
           <li key={img.id} className={spanClass(img.span)}>
             <button
               type="button"
-              onClick={() => setOpenIndex(i)}
+              onClick={(event) => {
+                openerRef.current = event.currentTarget;
+                setOpenIndex(i);
+              }}
               className="group relative block h-full w-full overflow-hidden rounded-2xl border border-border bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               aria-label={`Apri immagine: ${img.alt}`}
             >
@@ -41,6 +45,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
         <GalleryLightbox
           images={images}
           index={openIndex}
+          returnFocusElement={openerRef.current}
           onClose={() => setOpenIndex(null)}
           onIndexChange={setOpenIndex}
         />
