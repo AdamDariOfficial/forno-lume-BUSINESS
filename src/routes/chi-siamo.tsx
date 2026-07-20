@@ -43,8 +43,8 @@ function AboutPage() {
 
       {/* Origine — testo + immagine (immagine a destra) */}
       <section className="container-page py-16 md:py-24">
-        <Reveal className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-          <div className="md:col-span-6">
+        <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
+          <Reveal className="md:col-span-6">
             <p className="eyebrow">{origine.eyebrow}</p>
             <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
               {origine.title}
@@ -52,8 +52,8 @@ function AboutPage() {
             <p className="mt-5 text-muted-foreground md:text-lg">
               {origine.body}
             </p>
-          </div>
-          <div className="md:col-span-6">
+          </Reveal>
+          <Reveal delay={80} className="md:col-span-6">
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={aboutImg}
@@ -64,8 +64,8 @@ function AboutPage() {
                 className="h-72 w-full object-cover md:h-[460px]"
               />
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
 
       {/* Filosofia — blocco tipografico manifesto */}
@@ -85,8 +85,17 @@ function AboutPage() {
 
       {/* Il forno — immagine a sinistra, testo a destra */}
       <section className="container-page py-16 md:py-24">
-        <Reveal className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-          <div className="md:col-span-7">
+        <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
+          <Reveal className="md:order-2 md:col-span-5">
+            <p className="eyebrow">{forno.eyebrow}</p>
+            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
+              {forno.title}
+            </h2>
+            <p className="mt-5 text-muted-foreground md:text-lg">
+              {forno.body}
+            </p>
+          </Reveal>
+          <Reveal delay={80} className="md:order-1 md:col-span-7">
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={fornoImg}
@@ -97,23 +106,23 @@ function AboutPage() {
                 className="h-72 w-full object-cover md:h-[480px]"
               />
             </div>
-          </div>
-          <div className="md:col-span-5">
-            <p className="eyebrow">{forno.eyebrow}</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-              {forno.title}
-            </h2>
-            <p className="mt-5 text-muted-foreground md:text-lg">
-              {forno.body}
-            </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
 
       {/* La cucina — layout compatto testo + piatto */}
       <section className="container-page pb-16 md:pb-24">
-        <Reveal className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-          <div className="md:col-span-6 md:order-2">
+        <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
+          <Reveal className="md:col-span-6">
+            <p className="eyebrow">{cucina.eyebrow}</p>
+            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
+              {cucina.title}
+            </h2>
+            <p className="mt-5 text-muted-foreground md:text-lg">
+              {cucina.body}
+            </p>
+          </Reveal>
+          <Reveal delay={80} className="md:col-span-6">
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={piattoImg}
@@ -124,17 +133,8 @@ function AboutPage() {
                 className="aspect-[4/5] w-full object-cover md:aspect-auto md:h-[480px]"
               />
             </div>
-          </div>
-          <div className="md:col-span-6 md:order-1">
-            <p className="eyebrow">{cucina.eyebrow}</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-              {cucina.title}
-            </h2>
-            <p className="mt-5 text-muted-foreground md:text-lg">
-              {cucina.body}
-            </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
 
       {/* Ingredienti + Atmosfera — sezione conclusiva con grande immagine */}

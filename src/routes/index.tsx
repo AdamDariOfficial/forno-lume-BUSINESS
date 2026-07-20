@@ -291,13 +291,25 @@ function ExperienceTrio() {
           {homeContent.experience.map((s, i) => {
             const reverse = i % 2 === 1;
             return (
-              <Reveal
+              <div
                 key={s.id}
-                className={`grid items-center gap-8 md:grid-cols-12 md:gap-14 ${
-                  reverse ? "md:[&>div:first-child]:order-2" : ""
-                }`}
+                className="grid items-center gap-8 md:grid-cols-12 md:gap-14"
               >
-                <div className="md:col-span-6">
+                <Reveal
+                  className={`md:col-span-6 ${reverse ? "md:order-1" : "md:order-2"}`}
+                >
+                  <p className="eyebrow">{s.eyebrow}</p>
+                  <h3 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
+                    {s.title}
+                  </h3>
+                  <p className="mt-4 text-muted-foreground md:text-lg">
+                    {s.body}
+                  </p>
+                </Reveal>
+                <Reveal
+                  delay={80}
+                  className={`md:col-span-6 ${reverse ? "md:order-2" : "md:order-1"}`}
+                >
                   <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
                     <img
                       src={imgs[i]}
@@ -308,17 +320,8 @@ function ExperienceTrio() {
                       className="h-72 w-full object-cover md:h-[420px]"
                     />
                   </div>
-                </div>
-                <div className="md:col-span-6">
-                  <p className="eyebrow">{s.eyebrow}</p>
-                  <h3 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-                    {s.title}
-                  </h3>
-                  <p className="mt-4 text-muted-foreground md:text-lg">
-                    {s.body}
-                  </p>
-                </div>
-              </Reveal>
+                </Reveal>
+              </div>
             );
           })}
         </div>
