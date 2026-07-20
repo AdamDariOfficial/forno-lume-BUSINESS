@@ -4,6 +4,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { MenuCategoryNav } from "@/components/site/MenuCategoryNav";
 import { MenuCategorySection } from "@/components/site/MenuList";
 import { CTASection } from "@/components/site/CTASection";
+import { Reveal } from "@/components/site/Reveal";
 import { menu } from "@/config/menu";
 import { pagesMeta } from "@/config/pages";
 import { seoMeta, seoLinks } from "@/lib/seo";
@@ -36,17 +37,19 @@ function MenuPage() {
           <MenuCategorySection key={c.id} category={c} />
         ))}
 
-        <aside
-          role="note"
-          className="my-14 rounded-2xl border border-border bg-secondary/40 p-6 text-sm text-muted-foreground md:my-16 md:p-8"
-        >
-          <p className="font-medium text-foreground">Allergeni e intolleranze</p>
-          <p className="mt-2">
-            Le nostre preparazioni possono contenere allergeni. Segnala eventuali
-            intolleranze o allergie al momento della prenotazione o al personale
-            in sala: cercheremo insieme la proposta più adatta.
-          </p>
-        </aside>
+        <Reveal className="my-14 md:my-16">
+          <aside
+            role="note"
+            className="rounded-2xl border border-border bg-secondary/40 p-6 text-sm text-muted-foreground md:p-8"
+          >
+            <p className="font-medium text-foreground">Allergeni e intolleranze</p>
+            <p className="mt-2">
+              Le nostre preparazioni possono contenere allergeni. Segnala eventuali
+              intolleranze o allergie al momento della prenotazione o al personale
+              in sala: cercheremo insieme la proposta più adatta.
+            </p>
+          </aside>
+        </Reveal>
       </div>
 
       <CTASection

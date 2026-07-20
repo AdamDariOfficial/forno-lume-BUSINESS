@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import type { GalleryImage } from "@/config/gallery";
 import { GalleryLightbox } from "./GalleryLightbox";
+import { Reveal } from "./Reveal";
 
 // Editorial grid: alternating spans (wide/tall/normal) for a magazine feel.
 // Clicking a tile opens the lightbox.
@@ -18,7 +19,13 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
     <>
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:auto-rows-[220px] md:gap-4 md:auto-rows-[260px]">
         {images.map((img, i) => (
-          <li key={img.id} className={spanClass(img.span)}>
+          <Reveal
+            as="li"
+            key={img.id}
+            variant="image"
+            delay={(i % 3) * 70}
+            className={spanClass(img.span)}
+          >
             <button
               type="button"
               onClick={(event) => {
@@ -37,7 +44,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               />
             </button>
-          </li>
+          </Reveal>
         ))}
       </ul>
 
@@ -59,9 +66,12 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
 export function GalleryPreviewGrid({ images }: { images: readonly GalleryImage[] }) {
   return (
     <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-      {images.map((img) => (
-        <li
+      {images.map((img, i) => (
+        <Reveal
+          as="li"
           key={img.id}
+          variant="image"
+          delay={(i % 4) * 60}
           className="overflow-hidden rounded-2xl border border-border bg-secondary/30"
         >
           <img
@@ -72,7 +82,7 @@ export function GalleryPreviewGrid({ images }: { images: readonly GalleryImage[]
             height={img.h}
             className="aspect-[4/5] h-full w-full object-cover"
           />
-        </li>
+        </Reveal>
       ))}
     </ul>
   );

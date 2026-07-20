@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { Reveal } from "./Reveal";
 
 // Single-open accordion. Same visual + a11y contract as the START version.
 export function FAQAccordion({
@@ -17,7 +18,7 @@ export function FAQAccordion({
         const panelId = `faq-panel-${i}`;
         const btnId = `faq-btn-${i}`;
         return (
-          <li key={f.q}>
+          <Reveal as="li" key={f.q} delay={Math.min(i * 70, 280)}>
             <button
               id={btnId}
               type="button"
@@ -29,7 +30,7 @@ export function FAQAccordion({
               <span className="font-display text-lg md:text-xl">{f.q}</span>
               <span
                 aria-hidden
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-terracotta transition-all duration-300 motion-reduce:transition-none ${
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-terracotta transition-[transform,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
                   open ? "rotate-180 bg-terracotta/10" : "rotate-0"
                 }`}
               >
@@ -40,19 +41,19 @@ export function FAQAccordion({
               id={panelId}
               role="region"
               aria-labelledby={btnId}
-              className={`grid overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+              className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
                 open
-                  ? "grid-rows-[1fr] pb-6 opacity-100"
+                  ? "grid-rows-[1fr] opacity-100"
                   : "grid-rows-[0fr] opacity-0"
               }`}
             >
-              <div className="min-h-0">
+              <div className="min-h-0 pb-6">
                 <p className="max-w-2xl text-[15px] text-muted-foreground">
                   {f.a}
                 </p>
               </div>
             </div>
-          </li>
+          </Reveal>
         );
       })}
     </ul>

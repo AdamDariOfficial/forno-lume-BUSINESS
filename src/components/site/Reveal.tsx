@@ -1,13 +1,20 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
   className?: string;
   delay?: number;
   as?: "div" | "section" | "article" | "li" | "ul";
+  variant?: "default" | "image";
 };
 
-export function Reveal({ children, className = "", delay = 0, as: Tag = "div" }: Props) {
+export function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  as: Tag = "div",
+  variant = "default",
+}: Props) {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -18,6 +25,10 @@ export function Reveal({ children, className = "", delay = 0, as: Tag = "div" }:
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
     ) {
+      setVisible(true);
+      return;
+    }
+    if (typeof IntersectionObserver === "undefined") {
       setVisible(true);
       return;
     }
@@ -36,14 +47,17 @@ export function Reveal({ children, className = "", delay = 0, as: Tag = "div" }:
     return () => io.disconnect();
   }, []);
 
-  const Comp = Tag as React.ElementType;
+  const setElementRef = useCallback((element: HTMLElement | null) => {
+    ref.current = element;
+  }, []);
+
   return (
-    <Comp
-      ref={ref as never}
-      className={`reveal ${visible ? "reveal-in" : ""} ${className}`}
+    <Tag
+      ref={setElementRef}
+      className={`reveal ${variant === "image" ? "reveal-image" : ""} ${visible ? "reveal-in" : ""} ${className}`}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
-    </Comp>
+    </Tag>
   );
 }

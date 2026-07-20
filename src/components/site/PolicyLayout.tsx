@@ -17,10 +17,20 @@ export function PolicyLayout({
       <Navbar />
       <main className="container-page pb-24 pt-32 md:pt-40">
         <div className="mx-auto max-w-3xl">
-          <p className="eyebrow">Documento legale</p>
-          <h1 className="mt-4 text-4xl font-medium md:text-5xl">{title}</h1>
+          <p className="eyebrow fade-up">Documento legale</p>
+          <h1
+            className="fade-up mt-4 text-4xl font-medium md:text-5xl"
+            style={{ animationDelay: "80ms" }}
+          >
+            {title}
+          </h1>
           {intro && (
-            <p className="mt-4 text-base text-muted-foreground">{intro}</p>
+            <p
+              className="fade-up mt-4 text-base text-muted-foreground"
+              style={{ animationDelay: "160ms" }}
+            >
+              {intro}
+            </p>
           )}
           <div className="mt-10 space-y-8 text-[15px] leading-relaxed text-foreground/85 [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-2xl [&_h2]:text-foreground [&_p]:mt-3 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5">
             {children}
