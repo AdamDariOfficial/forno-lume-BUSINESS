@@ -44,16 +44,20 @@ function AboutPage() {
       {/* Origine — testo + immagine (immagine a destra) */}
       <section className="container-page py-16 md:py-24">
         <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-          <Reveal className="md:col-span-6">
-            <p className="eyebrow">{origine.eyebrow}</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-              {origine.title}
-            </h2>
-            <p className="mt-5 text-muted-foreground md:text-lg">
-              {origine.body}
-            </p>
-          </Reveal>
-          <Reveal delay={80} className="md:col-span-6">
+          <div className="md:col-span-6">
+            <Reveal>
+              <p className="eyebrow">{origine.eyebrow}</p>
+            </Reveal>
+            <Reveal delay={80} className="mt-4">
+              <h2 className="font-display text-3xl leading-tight md:text-4xl">
+                {origine.title}
+              </h2>
+            </Reveal>
+            <Reveal delay={160} className="mt-5">
+              <p className="text-muted-foreground md:text-lg">{origine.body}</p>
+            </Reveal>
+          </div>
+          <Reveal variant="image" delay={240} className="md:col-span-6">
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={aboutImg}
@@ -71,31 +75,39 @@ function AboutPage() {
       {/* Filosofia — blocco tipografico manifesto */}
       <section className="border-y border-border bg-secondary/30">
         <div className="container-page py-20 md:py-28">
-          <Reveal className="mx-auto max-w-3xl text-center">
-            <p className="eyebrow justify-center">{filosofia.eyebrow}</p>
-            <p className="mt-6 font-display text-3xl leading-[1.15] md:text-[2.6rem]">
-              {filosofia.title}
-            </p>
-            <p className="mt-6 text-muted-foreground md:text-lg">
-              {filosofia.body}
-            </p>
-          </Reveal>
+          <div className="mx-auto max-w-3xl text-center">
+            <Reveal>
+              <p className="eyebrow justify-center">{filosofia.eyebrow}</p>
+            </Reveal>
+            <Reveal delay={80} className="mt-6">
+              <p className="font-display text-3xl leading-[1.15] md:text-[2.6rem]">
+                {filosofia.title}
+              </p>
+            </Reveal>
+            <Reveal delay={160} className="mt-6">
+              <p className="text-muted-foreground md:text-lg">{filosofia.body}</p>
+            </Reveal>
+          </div>
         </div>
       </section>
 
       {/* Il forno — immagine a sinistra, testo a destra */}
       <section className="container-page py-16 md:py-24">
         <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-          <Reveal className="md:order-2 md:col-span-5">
-            <p className="eyebrow">{forno.eyebrow}</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-              {forno.title}
-            </h2>
-            <p className="mt-5 text-muted-foreground md:text-lg">
-              {forno.body}
-            </p>
-          </Reveal>
-          <Reveal delay={80} className="md:order-1 md:col-span-7">
+          <div className="md:order-2 md:col-span-5">
+            <Reveal>
+              <p className="eyebrow">{forno.eyebrow}</p>
+            </Reveal>
+            <Reveal delay={80} className="mt-4">
+              <h2 className="font-display text-3xl leading-tight md:text-4xl">
+                {forno.title}
+              </h2>
+            </Reveal>
+            <Reveal delay={160} className="mt-5">
+              <p className="text-muted-foreground md:text-lg">{forno.body}</p>
+            </Reveal>
+          </div>
+          <Reveal variant="image" delay={240} className="md:order-1 md:col-span-7">
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={fornoImg}
@@ -113,16 +125,20 @@ function AboutPage() {
       {/* La cucina — layout compatto testo + piatto */}
       <section className="container-page pb-16 md:pb-24">
         <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
-          <Reveal className="md:col-span-6">
-            <p className="eyebrow">{cucina.eyebrow}</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-              {cucina.title}
-            </h2>
-            <p className="mt-5 text-muted-foreground md:text-lg">
-              {cucina.body}
-            </p>
-          </Reveal>
-          <Reveal delay={80} className="md:col-span-6">
+          <div className="md:col-span-6">
+            <Reveal>
+              <p className="eyebrow">{cucina.eyebrow}</p>
+            </Reveal>
+            <Reveal delay={80} className="mt-4">
+              <h2 className="font-display text-3xl leading-tight md:text-4xl">
+                {cucina.title}
+              </h2>
+            </Reveal>
+            <Reveal delay={160} className="mt-5">
+              <p className="text-muted-foreground md:text-lg">{cucina.body}</p>
+            </Reveal>
+          </div>
+          <Reveal variant="image" delay={240} className="md:col-span-6">
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={piattoImg}
@@ -140,7 +156,7 @@ function AboutPage() {
       {/* Ingredienti + Atmosfera — sezione conclusiva con grande immagine */}
       <section className="border-t border-border bg-secondary/30">
         <div className="container-page py-20 md:py-28">
-          <Reveal className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
+          <Reveal variant="image" className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
             <img
               src={salaImg}
               alt="Angolo della sala con luce calda e tavoli in legno"
@@ -151,45 +167,57 @@ function AboutPage() {
             />
           </Reveal>
           <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-16">
-            <Reveal>
-              <p className="eyebrow">{ingredienti.eyebrow}</p>
-              <h3 className="mt-4 font-display text-2xl leading-tight md:text-3xl">
-                {ingredienti.title}
-              </h3>
-              <p className="mt-4 text-muted-foreground md:text-lg">
-                {ingredienti.body}
-              </p>
-            </Reveal>
-            <Reveal>
-              <p className="eyebrow">{atmosfera.eyebrow}</p>
-              <h3 className="mt-4 font-display text-2xl leading-tight md:text-3xl">
-                {atmosfera.title}
-              </h3>
-              <p className="mt-4 text-muted-foreground md:text-lg">
-                {atmosfera.body}
-              </p>
-            </Reveal>
+            <div>
+              <Reveal>
+                <p className="eyebrow">{ingredienti.eyebrow}</p>
+              </Reveal>
+              <Reveal delay={80} className="mt-4">
+                <h3 className="font-display text-2xl leading-tight md:text-3xl">
+                  {ingredienti.title}
+                </h3>
+              </Reveal>
+              <Reveal delay={160} className="mt-4">
+                <p className="text-muted-foreground md:text-lg">
+                  {ingredienti.body}
+                </p>
+              </Reveal>
+            </div>
+            <div>
+              <Reveal>
+                <p className="eyebrow">{atmosfera.eyebrow}</p>
+              </Reveal>
+              <Reveal delay={80} className="mt-4">
+                <h3 className="font-display text-2xl leading-tight md:text-3xl">
+                  {atmosfera.title}
+                </h3>
+              </Reveal>
+              <Reveal delay={160} className="mt-4">
+                <p className="text-muted-foreground md:text-lg">
+                  {atmosfera.body}
+                </p>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="container-page py-16 md:py-20">
-        <div className="flex flex-wrap gap-3">
+        <Reveal className="flex flex-wrap gap-3">
           <Link
             to="/menu"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            className="motion-cta inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
             Vai al menu
             <ArrowUpRight className="h-4 w-4" />
           </Link>
           <Link
             to="/contatti"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium transition hover:bg-secondary"
+            className="motion-cta inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium hover:bg-secondary"
           >
             Contatti e mappa
             <ArrowUpRight className="h-4 w-4" />
           </Link>
-        </div>
+        </Reveal>
       </section>
 
       <CTASection

@@ -9,7 +9,7 @@ export function ContactActions() {
           href={waLink(site.contact.whatsappReserveMessage)}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition hover:border-terracotta/40 hover:bg-secondary/40"
+          className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition-[border-color,background-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-terracotta/40 hover:bg-secondary/40"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
             <MessageCircle className="h-5 w-5" />
@@ -27,7 +27,7 @@ export function ContactActions() {
       <li>
         <a
           href={telLink()}
-          className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition hover:border-terracotta/40 hover:bg-secondary/40"
+          className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition-[border-color,background-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-terracotta/40 hover:bg-secondary/40"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
             <Phone className="h-5 w-5" />
@@ -47,7 +47,7 @@ export function ContactActions() {
           href={site.contact.mapExternalUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition hover:border-terracotta/40 hover:bg-secondary/40"
+          className="group flex h-full items-center gap-3 rounded-2xl border border-border bg-card p-5 transition-[border-color,background-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-terracotta/40 hover:bg-secondary/40"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
             <MapPin className="h-5 w-5" />

@@ -1,5 +1,6 @@
 import { MessageCircle, Mail } from "lucide-react";
 import { site, waLink, mailLink, primaryCtaHref } from "@/config/site";
+import { Reveal } from "./Reveal";
 
 type Props = {
   eyebrow?: string;
@@ -43,38 +44,46 @@ export function CTASection({
             isDark ? "text-primary-foreground" : "text-foreground"
           }`}
         >
-          <p
-            className="eyebrow"
-            style={isDark ? { color: "oklch(0.86 0.08 82)" } : undefined}
-          >
-            <span className="opacity-80">{eyebrow}</span>
-          </p>
-          <h2 className="mt-4 text-4xl font-medium leading-[1.05] md:text-5xl">
-            {title}
-            {accent && (
-              <>
-                <br />
-                <span
-                  className="italic"
-                  style={
-                    isDark ? { color: "oklch(0.86 0.08 82)" } : { color: "var(--terracotta)" }
-                  }
-                >
-                  {accent}
-                </span>
-              </>
-            )}
-          </h2>
-          {body && (
+          <Reveal>
             <p
-              className={`mt-5 max-w-lg text-base md:text-lg ${
-                isDark ? "opacity-85" : "text-muted-foreground"
-              }`}
+              className="eyebrow"
+              style={isDark ? { color: "oklch(0.86 0.08 82)" } : undefined}
             >
-              {body}
+              <span className="opacity-80">{eyebrow}</span>
             </p>
+          </Reveal>
+          <Reveal delay={80} className="mt-4">
+            <h2 className="text-4xl font-medium leading-[1.05] md:text-5xl">
+              {title}
+              {accent && (
+                <>
+                  <br />
+                  <span
+                    className="italic"
+                    style={
+                      isDark
+                        ? { color: "oklch(0.86 0.08 82)" }
+                        : { color: "var(--terracotta)" }
+                    }
+                  >
+                    {accent}
+                  </span>
+                </>
+              )}
+            </h2>
+          </Reveal>
+          {body && (
+            <Reveal delay={160} className="mt-5">
+              <p
+                className={`max-w-lg text-base md:text-lg ${
+                  isDark ? "opacity-85" : "text-muted-foreground"
+                }`}
+              >
+                {body}
+              </p>
+            </Reveal>
           )}
-          <div className="mt-8 flex flex-wrap gap-3">
+          <Reveal delay={240} className="mt-8 flex flex-wrap gap-3">
             <a
               href={primaryCtaHref()}
               target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
@@ -83,7 +92,7 @@ export function CTASection({
                   ? "noopener noreferrer"
                   : undefined
               }
-              className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium transition hover:opacity-90 ${
+              className={`motion-cta inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium hover:opacity-90 ${
                 isDark
                   ? "bg-background text-foreground"
                   : "bg-primary text-primary-foreground shadow-[var(--shadow-warm)]"
@@ -94,7 +103,7 @@ export function CTASection({
             </a>
             <a
               href={mailLink("Contatto Forno Lume")}
-              className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium transition ${
+              className={`motion-cta inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium ${
                 isDark
                   ? "border border-white/25 text-primary-foreground hover:bg-white/10"
                   : "border border-border bg-card hover:bg-secondary"
@@ -103,7 +112,7 @@ export function CTASection({
               <Mail className="h-4 w-4" />
               Contattaci via email
             </a>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

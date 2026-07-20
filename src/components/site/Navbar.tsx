@@ -130,11 +130,11 @@ export function Navbar() {
       aria-hidden={shown ? undefined : true}
       inert={!shown}
       tabIndex={open ? -1 : undefined}
-      className={`fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md transition-[opacity,transform,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [will-change:opacity,transform] ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md transition-[opacity,translate,transform] duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] [will-change:opacity,translate,transform] ${
         shown
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 -translate-y-full pointer-events-none"
-      } motion-reduce:transition-opacity motion-reduce:transform-none`}
+      } motion-reduce:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none`}
     >
       <div className="container-page flex h-16 items-center justify-between md:h-20">
         <Link
@@ -177,7 +177,7 @@ export function Navbar() {
           target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
           rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
           inert={open}
-          className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 md:inline-flex"
+          className="motion-cta hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 md:inline-flex"
         >
           {site.primaryCta.label}
         </a>
@@ -200,13 +200,13 @@ export function Navbar() {
         >
           <Menu
             aria-hidden="true"
-            className={`absolute h-5 w-5 transition-all duration-300 ${
+            className={`absolute h-5 w-5 transition-[opacity,transform] duration-300 motion-reduce:transform-none motion-reduce:transition-none ${
               open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
             }`}
           />
           <X
             aria-hidden="true"
-            className={`absolute h-5 w-5 transition-all duration-300 ${
+            className={`absolute h-5 w-5 transition-[opacity,transform] duration-300 motion-reduce:transform-none motion-reduce:transition-none ${
               open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
             }`}
           />
@@ -217,7 +217,7 @@ export function Navbar() {
       <div
         aria-hidden
         onClick={() => close()}
-        className={`absolute inset-x-0 top-full z-40 h-[calc(100dvh-4rem)] bg-ink/30 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        className={`absolute inset-x-0 top-full z-40 h-[calc(100dvh-4rem)] bg-ink/30 backdrop-blur-sm transition-opacity duration-300 motion-reduce:transition-none md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -227,7 +227,7 @@ export function Navbar() {
         id="mobile-nav"
         aria-hidden={open ? undefined : true}
         inert={!open}
-        className={`md:hidden absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-[max-height,opacity,transform] duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none md:hidden ${
           open
             ? "max-h-[80vh] opacity-100 translate-y-0"
             : "max-h-0 opacity-0 -translate-y-2"
@@ -243,14 +243,13 @@ export function Navbar() {
                   to={n.to}
                   activeOptions={n.to === "/" ? { exact: true } : undefined}
                   onClick={() => close(false)}
-                  style={{ transitionDelay: `${open ? i * 40 : 0}ms` }}
                   activeProps={{
                     className:
-                      "flex items-center justify-between border-b border-border/60 py-4 text-base text-terracotta transition-all duration-300 last:border-b-0",
+                      "flex items-center justify-between border-b border-border/60 py-4 text-base text-terracotta transition-colors duration-300 last:border-b-0",
                   }}
                   inactiveProps={{
                     className:
-                      "flex items-center justify-between border-b border-border/60 py-4 text-base transition-all duration-300 last:border-b-0",
+                      "flex items-center justify-between border-b border-border/60 py-4 text-base transition-colors duration-300 last:border-b-0",
                   }}
                 >
                   <span>{n.label}</span>

@@ -78,37 +78,49 @@ function Hero() {
         }}
       />
       <div className="container-page grid gap-10 pb-16 pt-8 md:grid-cols-12 md:gap-12 md:pb-24 md:pt-14">
-        <div className="fade-up md:col-span-6 md:pt-10">
-          <p className="eyebrow">{site.brand.kicker}</p>
-          <h1 className="mt-5 text-[2.6rem] leading-[1.05] font-medium tracking-tight text-foreground sm:text-6xl md:text-[4.2rem]">
+        <div className="md:col-span-6 md:pt-10">
+          <p className="eyebrow fade-up">{site.brand.kicker}</p>
+          <h1
+            className="fade-up mt-5 text-[2.6rem] leading-[1.05] font-medium tracking-tight text-foreground sm:text-6xl md:text-[4.2rem]"
+            style={{ animationDelay: "80ms" }}
+          >
             Cucina semplice,
             <br />
             <span className="italic text-terracotta">atmosfera calda</span>,
             <br />
             dettagli curati.
           </h1>
-          <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
+          <p
+            className="fade-up mt-6 max-w-xl text-base text-muted-foreground md:text-lg"
+            style={{ animationDelay: "160ms" }}
+          >
             {site.brand.description}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div
+            className="fade-up mt-8 flex flex-wrap gap-3"
+            style={{ animationDelay: "240ms" }}
+          >
             <a
               href={waLink(site.contact.whatsappReserveMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)] transition hover:opacity-90"
+              className="motion-cta group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)] hover:opacity-90"
             >
               <MessageCircle className="h-4 w-4" />
               Prenota su WhatsApp
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:transform-none" />
             </a>
             <Link
               to="/menu"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3.5 text-sm font-medium transition hover:bg-secondary"
+              className="motion-cta inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3.5 text-sm font-medium hover:bg-secondary"
             >
               Scopri il menu
             </Link>
           </div>
-          <div className="mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
+          <div
+            className="fade-up mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-border pt-6 text-xs text-muted-foreground"
+            style={{ animationDelay: "240ms" }}
+          >
             <div className="flex flex-col gap-1">
               <Clock className="h-4 w-4 text-terracotta" />
               <span>Mar–Dom<br />18:30–23:00</span>
@@ -123,7 +135,10 @@ function Hero() {
             </div>
           </div>
         </div>
-        <div className="fade-up md:col-span-6">
+        <div
+          className="fade-up md:col-span-6"
+          style={{ animationDelay: "240ms" }}
+        >
           <div className="relative">
             <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-gradient-to-br from-accent/40 to-terracotta/10 blur-2xl" />
             <div className="overflow-hidden rounded-[1.75rem] border border-border shadow-[var(--shadow-warm)]">
@@ -154,14 +169,15 @@ function TrustStrip() {
   return (
     <section className="border-y border-border bg-secondary/40">
       <div className="container-page grid grid-cols-2 gap-6 py-8 md:grid-cols-4 md:gap-4 md:py-10">
-        {homeContent.trust.map((t) => (
-          <div
+        {homeContent.trust.map((t, i) => (
+          <Reveal
             key={t.label}
+            delay={i * 60}
             className="flex items-center gap-3 text-sm md:justify-center"
           >
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-terracotta" />
             <span className="text-foreground/80">{t.label}</span>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>
@@ -179,20 +195,24 @@ function IntroSection() {
             eyebrow={homeContent.intro.eyebrow}
             title={homeContent.intro.title}
           />
-          <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
-            {homeContent.intro.body}
-          </p>
-          <Link
-            to="/chi-siamo"
-            className="group mt-8 inline-flex items-center gap-2 text-sm font-medium text-terracotta transition-colors hover:text-terracotta/80"
-          >
-            <span className="border-b border-terracotta/40 pb-0.5 transition-colors group-hover:border-terracotta">
-              {homeContent.intro.linkLabel}
-            </span>
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
+          <Reveal delay={160} className="mt-6">
+            <p className="max-w-xl text-base text-muted-foreground md:text-lg">
+              {homeContent.intro.body}
+            </p>
+          </Reveal>
+          <Reveal delay={240} className="mt-8">
+            <Link
+              to="/chi-siamo"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-terracotta transition-colors duration-300 hover:text-terracotta/80"
+            >
+              <span className="border-b border-terracotta/40 pb-0.5 transition-colors group-hover:border-terracotta">
+                {homeContent.intro.linkLabel}
+              </span>
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:transform-none" />
+            </Link>
+          </Reveal>
         </div>
-        <Reveal className="md:order-1 md:col-span-5">
+        <Reveal variant="image" delay={240} className="md:order-1 md:col-span-5">
           <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
             <img
               src={aboutImg}
@@ -220,48 +240,58 @@ function SignaturePreview() {
       <div className="container-page">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading eyebrow="Proposte signature" title="Una piccola selezione" />
-          <p className="max-w-md text-sm text-muted-foreground md:text-[15px]">
-            Una selezione essenziale delle proposte più rappresentative di
-            Forno Lume. Il menu completo cambia con le stagioni.
-          </p>
+          <Reveal delay={160}>
+            <p className="max-w-md text-sm text-muted-foreground md:text-[15px]">
+              Una selezione essenziale delle proposte più rappresentative di
+              Forno Lume. Il menu completo cambia con le stagioni.
+            </p>
+          </Reveal>
         </div>
 
         <div className="mt-12 grid gap-10 md:grid-cols-12">
           <div className="md:col-span-7">
-            <MenuPreviewList items={signatureItems} />
-            <Link
-              to="/menu"
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium transition hover:bg-secondary"
-            >
-              Vedi il menu completo
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
+            <Reveal>
+              <MenuPreviewList items={signatureItems} />
+            </Reveal>
+            <Reveal delay={160} className="mt-8">
+              <Link
+                to="/menu"
+                className="motion-cta inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium hover:bg-secondary"
+              >
+                Vedi il menu completo
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Reveal>
           </div>
           <div className="md:col-span-5">
-            <div className="sticky top-24 overflow-hidden rounded-3xl border border-border">
-              <img
-                src={dishImg}
-                alt="Burrata con pomodorini datterino e basilico su ceramica rustica"
-                loading="lazy"
-                width={1408}
-                height={1408}
-                className="h-72 w-full object-cover md:h-[440px]"
-              />
-              <div className="bg-card p-6">
-                <p className="text-sm text-muted-foreground">
-                  Vuoi scoprire cosa c'è in carta questa sera? Scrivici per
-                  prenotare il tuo tavolo.
-                </p>
-                <a
-                  href={waLink(site.contact.whatsappReserveMessage)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Prenota un tavolo
-                </a>
-              </div>
+            <div className="sticky top-24">
+              <Reveal variant="image" delay={160}>
+                <div className="overflow-hidden rounded-3xl border border-border">
+                  <img
+                    src={dishImg}
+                    alt="Burrata con pomodorini datterino e basilico su ceramica rustica"
+                    loading="lazy"
+                    width={1408}
+                    height={1408}
+                    className="h-72 w-full object-cover md:h-[440px]"
+                  />
+                  <div className="bg-card p-6">
+                    <p className="text-sm text-muted-foreground">
+                      Vuoi scoprire cosa c'è in carta questa sera? Scrivici per
+                      prenotare il tuo tavolo.
+                    </p>
+                    <a
+                      href={waLink(site.contact.whatsappReserveMessage)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="motion-cta mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Prenota un tavolo
+                    </a>
+                  </div>
+                </div>
+              </Reveal>
             </div>
           </div>
         </div>
@@ -295,19 +325,24 @@ function ExperienceTrio() {
                 key={s.id}
                 className="grid items-center gap-8 md:grid-cols-12 md:gap-14"
               >
-                <Reveal
+                <div
                   className={`md:col-span-6 ${reverse ? "md:order-1" : "md:order-2"}`}
                 >
-                  <p className="eyebrow">{s.eyebrow}</p>
-                  <h3 className="mt-4 font-display text-3xl leading-tight md:text-4xl">
-                    {s.title}
-                  </h3>
-                  <p className="mt-4 text-muted-foreground md:text-lg">
-                    {s.body}
-                  </p>
-                </Reveal>
+                  <Reveal>
+                    <p className="eyebrow">{s.eyebrow}</p>
+                  </Reveal>
+                  <Reveal delay={80} className="mt-4">
+                    <h3 className="font-display text-3xl leading-tight md:text-4xl">
+                      {s.title}
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={160} className="mt-4">
+                    <p className="text-muted-foreground md:text-lg">{s.body}</p>
+                  </Reveal>
+                </div>
                 <Reveal
-                  delay={80}
+                  variant="image"
+                  delay={240}
                   className={`md:col-span-6 ${reverse ? "md:order-2" : "md:order-1"}`}
                 >
                   <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
@@ -341,7 +376,7 @@ function GalleryPreview() {
         />
         <Link
           to="/galleria"
-          className="inline-flex items-center gap-2 text-sm font-medium text-terracotta transition hover:opacity-80"
+          className="inline-flex items-center gap-2 text-sm font-medium text-terracotta transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-80"
         >
           Apri la galleria
           <ArrowUpRight className="h-4 w-4" />
@@ -362,7 +397,7 @@ function TestimonialsSection() {
         <SectionHeading eyebrow="Cosa dicono" title="Parole di chi è tornato." />
         <ul className="mt-12 grid gap-5 md:grid-cols-3 md:gap-6">
           {testimonials.map((t, i) => (
-            <Reveal as="li" key={t.name} delay={i * 100}>
+            <Reveal as="li" key={t.name} delay={i * 80}>
               <TestimonialCard item={t} />
             </Reveal>
           ))}
@@ -382,28 +417,34 @@ function PracticalPreview() {
             eyebrow="Informazioni pratiche"
             title={"Dove siamo, \nquando siamo aperti."}
           />
-          <p className="mt-6 text-sm text-muted-foreground md:text-[15px]">
-            Cucina aperta dal martedì alla domenica. Nel weekend consigliamo
-            di prenotare in anticipo.
-          </p>
-          <div className="mt-8 rounded-2xl border border-border bg-card/60 p-5 md:p-6">
-            <OpeningHours />
-          </div>
-          <Link
-            to="/contatti"
-            className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium transition hover:bg-secondary"
-          >
-            Vedi tutti i contatti
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          <Reveal delay={160} className="mt-6">
+            <p className="text-sm text-muted-foreground md:text-[15px]">
+              Cucina aperta dal martedì alla domenica. Nel weekend consigliamo
+              di prenotare in anticipo.
+            </p>
+          </Reveal>
+          <Reveal delay={160} className="mt-8">
+            <div className="rounded-2xl border border-border bg-card/60 p-5 md:p-6">
+              <OpeningHours />
+            </div>
+          </Reveal>
+          <Reveal delay={240} className="mt-8">
+            <Link
+              to="/contatti"
+              className="motion-cta inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium hover:bg-secondary"
+            >
+              Vedi tutti i contatti
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </Reveal>
         </div>
-        <div className="min-w-0 md:col-span-7">
+        <Reveal delay={240} className="min-w-0 md:col-span-7">
           <MapEmbed />
           <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
             <span>{site.contact.address}</span>
           </p>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -420,13 +461,15 @@ function FAQPreview() {
               eyebrow="Domande frequenti"
               title="Le risposte più comuni."
             />
-            <p className="mt-4 text-muted-foreground">
-              Non trovi quello che cerchi? Scrivici su WhatsApp, rispondiamo in breve tempo.
-            </p>
+            <Reveal delay={160} className="mt-4">
+              <p className="text-muted-foreground">
+                Non trovi quello che cerchi? Scrivici su WhatsApp, rispondiamo in breve tempo.
+              </p>
+            </Reveal>
           </div>
-          <div className="md:col-span-8">
+          <Reveal delay={160} className="md:col-span-8">
             <FAQAccordion items={homeContent.faq} />
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
