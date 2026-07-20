@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { site, primaryCtaHref } from "@/config/site";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 
 // Navbar
 // - Route-based (no scroll-spy on hash anchors).
@@ -14,6 +15,10 @@ export function Navbar() {
   const [heroVisible, setHeroVisible] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const rafRef = useRef<number | null>(null);
+  const modalRef = useRef<HTMLElement | null>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const firstDrawerLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const restoreFocusRef = useRef(false);
 
   const isHome = pathname === "/";
 
@@ -50,39 +55,81 @@ export function Navbar() {
     };
   }, [isHome]);
 
-  // Close drawer when resizing to desktop.
+  // Close the mobile dialog whenever the desktop breakpoint is reached.
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const onChange = (e: MediaQueryListEvent) => {
-      if (e.matches) setOpen(false);
+    const closeOnDesktop = () => {
+      if (window.innerWidth < 768) return;
+
+      restoreFocusRef.current = false;
+      setOpen((current) => (current ? false : current));
     };
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+
+    const mq = window.matchMedia("(min-width: 768px)");
+    mq.addEventListener("change", closeOnDesktop);
+    window.addEventListener("resize", closeOnDesktop);
+    closeOnDesktop();
+
+    return () => {
+      mq.removeEventListener("change", closeOnDesktop);
+      window.removeEventListener("resize", closeOnDesktop);
+    };
   }, []);
+
+  // Some viewport updates do not dispatch resize or media-query events. Keep
+  // this fallback active only while the mobile dialog is open.
+  useEffect(() => {
+    if (!open) return;
+
+    const closeIfDesktop = () => {
+      if (window.innerWidth < 768) return false;
+
+      restoreFocusRef.current = false;
+      setOpen((current) => (current ? false : current));
+      return true;
+    };
+
+    if (closeIfDesktop()) return;
+
+    const checkBreakpoint = window.setInterval(() => {
+      if (closeIfDesktop()) window.clearInterval(checkBreakpoint);
+    }, 150);
+
+    return () => window.clearInterval(checkBreakpoint);
+  }, [open]);
 
   // Close drawer on route change.
   useEffect(() => {
+    restoreFocusRef.current = false;
     setOpen(false);
   }, [pathname]);
 
-  // Lock body scroll while drawer is open.
-  useEffect(() => {
-    if (open) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
-  }, [open]);
+  const close = (shouldRestoreFocus = true) => {
+    if (!open) return;
+    restoreFocusRef.current = shouldRestoreFocus;
+    setOpen(false);
+  };
 
-  const close = () => setOpen(false);
+  useModalAccessibility({
+    open,
+    modalRef,
+    initialFocusRef: firstDrawerLinkRef,
+    returnFocusElement: menuTriggerRef.current,
+    restoreFocusRef,
+    onEscape: () => close(),
+  });
+
   // Drawer forces visibility regardless of scroll position.
   const shown = heroVisible || open || !isHome;
 
   return (
     <header
-      aria-hidden={!shown}
+      ref={modalRef}
+      role={open ? "dialog" : undefined}
+      aria-modal={open ? true : undefined}
+      aria-label={open ? "Menu di navigazione" : undefined}
+      aria-hidden={shown ? undefined : true}
+      inert={!shown}
+      tabIndex={open ? -1 : undefined}
       className={`fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md transition-[opacity,transform,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [will-change:opacity,transform] ${
         shown
           ? "opacity-100 translate-y-0 pointer-events-auto"
@@ -92,7 +139,8 @@ export function Navbar() {
       <div className="container-page flex h-16 items-center justify-between md:h-20">
         <Link
           to="/"
-          onClick={close}
+          inert={open}
+          onClick={() => close(false)}
           className="flex items-center gap-2 font-display text-xl tracking-tight sm:text-2xl"
           aria-label={`${site.brand.name} — Home`}
         >
@@ -100,7 +148,11 @@ export function Navbar() {
           {site.brand.name}
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigazione principale">
+        <nav
+          inert={open}
+          className="hidden items-center gap-8 md:flex"
+          aria-label="Navigazione principale"
+        >
           {site.mainNav.map((n) => (
             <Link
               key={n.to}
@@ -124,25 +176,36 @@ export function Navbar() {
           href={primaryCtaHref()}
           target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
           rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
+          inert={open}
           className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 md:inline-flex"
         >
           {site.primaryCta.label}
         </a>
 
         <button
+          ref={menuTriggerRef}
           type="button"
           aria-label={open ? "Chiudi menu" : "Apri menu"}
           aria-expanded={open}
           aria-controls="mobile-nav"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (open) {
+              close();
+            } else {
+              restoreFocusRef.current = false;
+              setOpen(true);
+            }
+          }}
           className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur md:hidden"
         >
           <Menu
+            aria-hidden="true"
             className={`absolute h-5 w-5 transition-all duration-300 ${
               open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
             }`}
           />
           <X
+            aria-hidden="true"
             className={`absolute h-5 w-5 transition-all duration-300 ${
               open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
             }`}
@@ -153,8 +216,8 @@ export function Navbar() {
       {/* Overlay */}
       <div
         aria-hidden
-        onClick={close}
-        className={`fixed inset-0 top-16 z-40 bg-ink/30 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        onClick={() => close()}
+        className={`absolute inset-x-0 top-full z-40 h-[calc(100dvh-4rem)] bg-ink/30 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -162,6 +225,8 @@ export function Navbar() {
       {/* Drawer */}
       <div
         id="mobile-nav"
+        aria-hidden={open ? undefined : true}
+        inert={!open}
         className={`md:hidden absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           open
             ? "max-h-[80vh] opacity-100 translate-y-0"
@@ -173,10 +238,11 @@ export function Navbar() {
             <nav className="flex flex-col" aria-label="Navigazione mobile">
               {site.mainNav.map((n, i) => (
                 <Link
+                  ref={i === 0 ? firstDrawerLinkRef : undefined}
                   key={n.to}
                   to={n.to}
                   activeOptions={n.to === "/" ? { exact: true } : undefined}
-                  onClick={close}
+                  onClick={() => close(false)}
                   style={{ transitionDelay: `${open ? i * 40 : 0}ms` }}
                   activeProps={{
                     className:
@@ -195,7 +261,7 @@ export function Navbar() {
               href={primaryCtaHref()}
               target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
               rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
-              onClick={close}
+              onClick={() => close()}
               className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)]"
             >
               {site.primaryCta.label}
