@@ -98,8 +98,8 @@ export function MenuCategoryNav({
                       aria-current={isActive ? "true" : undefined}
                       className={`inline-block whitespace-nowrap border-b-2 pb-1 text-sm transition-colors ${
                         isActive
-                          ? "border-terracotta text-terracotta"
-                          : "border-transparent text-foreground/70 hover:text-terracotta"
+                          ? "border-terracotta text-terracotta-ink"
+                          : "border-transparent text-foreground/70 hover:text-terracotta-ink"
                       }`}
                     >
                       {c.label}

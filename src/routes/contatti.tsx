@@ -9,7 +9,7 @@ import { CTASection } from "@/components/site/CTASection";
 import { Reveal } from "@/components/site/Reveal";
 import { site, mailLink, telLink, waLink } from "@/config/site";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/contatti")({
   head: () => ({
@@ -19,6 +19,14 @@ export const Route = createFileRoute("/contatti")({
       path: "/contatti",
     }),
     links: seoLinks("/contatti"),
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "ContactPage",
+        path: "/contatti",
+        title: pagesMeta.contact.title,
+        description: pagesMeta.contact.description,
+      }),
+    ),
   }),
   component: ContactPage,
 });
@@ -132,7 +140,7 @@ function InfoRow({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="block transition hover:text-terracotta"
+      className="block transition hover:text-terracotta-ink"
     >
       {content}
     </a>

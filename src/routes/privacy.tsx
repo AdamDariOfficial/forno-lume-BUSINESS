@@ -2,19 +2,24 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "@/components/site/PolicyLayout";
 import { site } from "@/config/site";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
-    meta: [
-      ...seoMeta({
+    meta: seoMeta({
+      title: pagesMeta.privacy.title,
+      description: pagesMeta.privacy.description,
+      path: "/privacy",
+    }),
+    links: seoLinks("/privacy"),
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "WebPage",
+        path: "/privacy",
         title: pagesMeta.privacy.title,
         description: pagesMeta.privacy.description,
-        path: "/privacy",
       }),
-      { name: "robots", content: "noindex" },
-    ],
-    links: seoLinks("/privacy"),
+    ),
   }),
   component: PrivacyPage,
 });

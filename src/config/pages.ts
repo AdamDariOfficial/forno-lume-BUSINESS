@@ -39,6 +39,7 @@ export const pagesMeta = {
   },
   notFound: {
     title: "Pagina non trovata | Forno Lume",
-    description: "La pagina che stai cercando non è disponibile.",
+    description:
+      "La pagina che stai cercando non è disponibile. Torna alla homepage di Forno Lume.",
   },
 } as const;

@@ -51,7 +51,7 @@ export function MenuCategorySection({ category }: { category: MenuCategory }) {
                 </div>
                 <span
                   aria-label={`Prezzo ${item.price} euro`}
-                  className="shrink-0 font-display text-lg text-terracotta"
+                  className="shrink-0 font-display text-lg text-terracotta-ink"
                 >
                   €{item.price}
                 </span>
@@ -101,7 +101,7 @@ export function MenuPreviewList({
           </div>
           <span
             aria-label={`Prezzo ${item.price} euro`}
-            className="shrink-0 font-display text-lg text-terracotta"
+            className="shrink-0 font-display text-lg text-terracotta-ink"
           >
             €{item.price}
           </span>

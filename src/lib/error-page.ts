@@ -1,30 +1,88 @@
 export function renderErrorPage(): string {
   return `<!doctype html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="utf-8" />
-    <title>This page didn't load</title>
+    <title>Qualcosa non ha funzionato | Forno Lume</title>
+    <meta name="description" content="Non siamo riusciti a mostrare questa pagina. Riprova oppure torna alla homepage di Forno Lume." />
+    <meta name="robots" content="noindex, follow" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #fafafa; color: #111; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
-      .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
-      h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-      p { color: #4b5563; margin: 0 0 1.5rem; }
-      .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
-      a, button { padding: 0.5rem 1rem; border-radius: 0.375rem; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      .primary { background: #111; color: #fff; }
-      .secondary { background: #fff; color: #111; border-color: #d1d5db; }
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: #faf3e6;
+        color: #221811;
+      }
+      * { box-sizing: border-box; }
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        padding: 1.5rem;
+        place-items: center;
+        background:
+          radial-gradient(70rem 32rem at 85% -10%, rgb(224 183 153 / 35%), transparent 60%),
+          #faf3e6;
+      }
+      main { width: min(100%, 34rem); text-align: center; }
+      .eyebrow {
+        margin: 0;
+        color: #5f4f42;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 1.25rem 0 0;
+        font-family: Fraunces, Georgia, serif;
+        font-size: clamp(2.25rem, 8vw, 3.25rem);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+      .copy { margin: 1rem auto 0; max-width: 30rem; color: #5f4f42; }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+      a, button {
+        display: inline-flex;
+        min-height: 2.75rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 0.7rem 1.4rem;
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .primary { background: #b25630; color: #fefaf1; }
+      .secondary { border-color: #d9cfc3; background: #fefaf1; color: #221811; }
+      a:hover, button:hover { filter: brightness(0.97); }
+      a:focus-visible, button:focus-visible {
+        outline: 2px solid #b85c37;
+        outline-offset: 3px;
+      }
     </style>
   </head>
   <body>
-    <div class="card">
-      <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+    <main>
+      <p class="eyebrow">Forno Lume</p>
+      <h1>Qualcosa non ha funzionato.</h1>
+      <p class="copy">Non siamo riusciti a mostrare questa pagina. Puoi riprovare oppure tornare alla homepage.</p>
       <div class="actions">
-        <button class="primary" onclick="location.reload()">Try again</button>
-        <a class="secondary" href="/">Go home</a>
+        <button class="primary" type="button" onclick="location.reload()">Riprova</button>
+        <a class="secondary" href="/">Torna alla homepage</a>
       </div>
-    </div>
+    </main>
   </body>
 </html>`;
 }

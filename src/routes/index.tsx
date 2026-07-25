@@ -13,7 +13,7 @@ import { signatureItems } from "@/config/menu";
 import { galleryPreview } from "@/config/gallery";
 import { testimonials } from "@/config/testimonials";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks, restaurantJsonLd } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 import { HomeLayout } from "@/components/site/HomeLayout";
 import { Reveal } from "@/components/site/Reveal";
@@ -34,12 +34,14 @@ export const Route = createFileRoute("/")({
       path: "/",
     }),
     links: seoLinks("/"),
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(restaurantJsonLd()),
-      },
-    ],
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "WebPage",
+        path: "/",
+        title: pagesMeta.home.title,
+        description: pagesMeta.home.description,
+      }),
+    ),
   }),
   component: HomePage,
 });
@@ -203,7 +205,7 @@ function IntroSection() {
           <Reveal delay={240} className="mt-8">
             <Link
               to="/chi-siamo"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-terracotta transition-colors duration-300 hover:text-terracotta/80"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-terracotta-ink transition-colors duration-300 hover:text-terracotta-ink"
             >
               <span className="border-b border-terracotta/40 pb-0.5 transition-colors group-hover:border-terracotta">
                 {homeContent.intro.linkLabel}
@@ -376,7 +378,7 @@ function GalleryPreview() {
         />
         <Link
           to="/galleria"
-          className="inline-flex items-center gap-2 text-sm font-medium text-terracotta transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-80"
+          className="inline-flex items-center gap-2 text-sm font-medium text-terracotta-ink transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-95"
         >
           Apri la galleria
           <ArrowUpRight className="h-4 w-4" />

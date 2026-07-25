@@ -6,7 +6,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { CTASection } from "@/components/site/CTASection";
 import { aboutContent } from "@/config/about";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 import aboutImg from "@/assets/about.jpg";
 import fornoImg from "@/assets/gallery/forno.jpg";
@@ -21,6 +21,14 @@ export const Route = createFileRoute("/chi-siamo")({
       path: "/chi-siamo",
     }),
     links: seoLinks("/chi-siamo"),
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "AboutPage",
+        path: "/chi-siamo",
+        title: pagesMeta.about.title,
+        description: pagesMeta.about.description,
+      }),
+    ),
   }),
   component: AboutPage,
 });
@@ -80,9 +88,9 @@ function AboutPage() {
               <p className="eyebrow justify-center">{filosofia.eyebrow}</p>
             </Reveal>
             <Reveal delay={80} className="mt-6">
-              <p className="font-display text-3xl leading-[1.15] md:text-[2.6rem]">
+              <h2 className="font-display text-3xl leading-[1.15] md:text-[2.6rem]">
                 {filosofia.title}
-              </p>
+              </h2>
             </Reveal>
             <Reveal delay={160} className="mt-6">
               <p className="text-muted-foreground md:text-lg">{filosofia.body}</p>
@@ -172,9 +180,9 @@ function AboutPage() {
                 <p className="eyebrow">{ingredienti.eyebrow}</p>
               </Reveal>
               <Reveal delay={80} className="mt-4">
-                <h3 className="font-display text-2xl leading-tight md:text-3xl">
+                <h2 className="font-display text-2xl leading-tight md:text-3xl">
                   {ingredienti.title}
-                </h3>
+                </h2>
               </Reveal>
               <Reveal delay={160} className="mt-4">
                 <p className="text-muted-foreground md:text-lg">
@@ -187,9 +195,9 @@ function AboutPage() {
                 <p className="eyebrow">{atmosfera.eyebrow}</p>
               </Reveal>
               <Reveal delay={80} className="mt-4">
-                <h3 className="font-display text-2xl leading-tight md:text-3xl">
+                <h2 className="font-display text-2xl leading-tight md:text-3xl">
                   {atmosfera.title}
-                </h3>
+                </h2>
               </Reveal>
               <Reveal delay={160} className="mt-4">
                 <p className="text-muted-foreground md:text-lg">

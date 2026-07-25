@@ -3,16 +3,16 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
-  useRouter,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
+import { RouteErrorFallback } from "../components/site/RouteErrorFallback";
+import { pagesMeta } from "../config/pages";
 import { site } from "../config/site";
 
 const SITE_TITLE = `${site.brand.name} — ${site.brand.kicker}`;
@@ -44,19 +44,19 @@ function NotFoundComponent() {
             >
               <Link
                 to="/"
-                className="motion-cta inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium tracking-wide text-primary-foreground hover:opacity-90"
+                className="motion-cta inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium tracking-wide text-primary-foreground hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Torna alla home
               </Link>
               <Link
                 to="/menu"
-                className="motion-cta inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-secondary"
+                className="motion-cta inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Vedi il menu
               </Link>
               <Link
                 to="/contatti"
-                className="motion-cta inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-secondary"
+                className="motion-cta inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Contattaci
               </Link>
@@ -69,80 +69,53 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
-  const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
-
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="max-w-md text-center">
-        <h1 className="text-2xl font-medium">Qualcosa non ha caricato</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Puoi riprovare o tornare alla home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-          >
-            Riprova
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium transition hover:bg-secondary"
-          >
-            Home
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    // Sitewide defaults only. Title, description, canonical, og:image
-    // are set per route (og:image ONLY at leaf routes to avoid override).
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#f5efe1" },
-      { property: "og:site_name", content: site.brand.name },
-      { property: "og:type", content: "website" },
-      { property: "og:locale", content: "it_IT" },
-      { title: SITE_TITLE },
-      { property: "og:title", content: SITE_TITLE },
-      { name: "twitter:title", content: SITE_TITLE },
-      { name: "description", content: SITE_DESC },
-      { property: "og:description", content: SITE_DESC },
-      { name: "twitter:description", content: SITE_DESC },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap",
-      },
-    ],
-  }),
+  head: ({ matches }) => {
+    const isNotFound = matches.some(
+      (match) => match.status === "notFound" || match.globalNotFound,
+    );
+    const title = isNotFound ? pagesMeta.notFound.title : SITE_TITLE;
+    const description = isNotFound ? pagesMeta.notFound.description : SITE_DESC;
+
+    return {
+      // Sitewide defaults only. Leaf routes override title, description,
+      // canonical and social metadata. Demo indexing policy stays global.
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "theme-color", content: "#f5efe1" },
+        { name: "robots", content: site.seo.robots },
+        { property: "og:site_name", content: site.brand.name },
+        { property: "og:type", content: "website" },
+        { property: "og:locale", content: "it_IT" },
+        { title },
+        { property: "og:title", content: title },
+        { name: "twitter:title", content: title },
+        { name: "description", content: description },
+        { property: "og:description", content: description },
+        { name: "twitter:description", content: description },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossOrigin: "anonymous",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap",
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
+  errorComponent: RouteErrorFallback,
 });
 
 function RootShell({ children }: { children: ReactNode }) {

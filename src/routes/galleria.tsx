@@ -5,7 +5,7 @@ import { GalleryGrid } from "@/components/site/GalleryGrid";
 import { CTASection } from "@/components/site/CTASection";
 import { gallery } from "@/config/gallery";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/galleria")({
   head: () => ({
@@ -15,6 +15,14 @@ export const Route = createFileRoute("/galleria")({
       path: "/galleria",
     }),
     links: seoLinks("/galleria"),
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "CollectionPage",
+        path: "/galleria",
+        title: pagesMeta.gallery.title,
+        description: pagesMeta.gallery.description,
+      }),
+    ),
   }),
   component: GalleryPage,
 });

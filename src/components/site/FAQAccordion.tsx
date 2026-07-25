@@ -25,7 +25,7 @@ export function FAQAccordion({
               onClick={() => setOpenIndex(open ? null : i)}
               aria-expanded={open}
               aria-controls={panelId}
-              className="flex w-full cursor-pointer items-center justify-between gap-6 py-6 text-left transition-colors hover:text-terracotta"
+              className="flex w-full cursor-pointer items-center justify-between gap-6 py-6 text-left transition-colors hover:text-terracotta-ink"
             >
               <span className="font-display text-lg md:text-xl">{f.q}</span>
               <span
