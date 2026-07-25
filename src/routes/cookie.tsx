@@ -1,19 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "@/components/site/PolicyLayout";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/cookie")({
   head: () => ({
-    meta: [
-      ...seoMeta({
+    meta: seoMeta({
+      title: pagesMeta.cookie.title,
+      description: pagesMeta.cookie.description,
+      path: "/cookie",
+    }),
+    links: seoLinks("/cookie"),
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "WebPage",
+        path: "/cookie",
         title: pagesMeta.cookie.title,
         description: pagesMeta.cookie.description,
-        path: "/cookie",
       }),
-      { name: "robots", content: "noindex" },
-    ],
-    links: seoLinks("/cookie"),
+    ),
   }),
   component: CookiePage,
 });

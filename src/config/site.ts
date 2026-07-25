@@ -10,6 +10,16 @@ export type MainNavItem = {
   label: string;
 };
 
+export type StructuredDataConfig = {
+  commercialEntityEnabled: boolean;
+};
+
+export type SeoConfig = {
+  isDemo: boolean;
+  robots: "noindex, follow" | "index, follow";
+  structuredData: StructuredDataConfig;
+};
+
 export type WeeklyHour = {
   day: string;
   short: string;
@@ -30,6 +40,14 @@ export type WeeklyHour = {
 export const site = {
   // Absolute base URL used to build canonical/og:url/og:image.
   url: "https://forno-lume-business.tretnix.com",
+
+  seo: {
+    isDemo: true,
+    robots: "noindex, follow",
+    structuredData: {
+      commercialEntityEnabled: false,
+    },
+  } satisfies SeoConfig,
 
   brand: {
     name: "Forno Lume",

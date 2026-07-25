@@ -1,6 +1,6 @@
 // SEO helpers. Absolute URLs are derived from site.url; when the domain is
-// not yet configured (empty site.url), canonical/og:url/og:image are simply
-// omitted rather than falling back to a placeholder or the START domain.
+// not yet configured (empty site.url), canonical/og:url/og:image and
+// structured data are omitted rather than falling back to placeholders.
 
 import { site } from "@/config/site";
 
@@ -49,41 +49,57 @@ export function seoLinks(path: string): Array<{ rel: string; href: string }> {
   return url ? [{ rel: "canonical", href: url }] : [];
 }
 
-// One canonical Restaurant node. Stable @id so pages referencing the same
-// entity don't create duplicates. No aggregateRating, reviews, or awards.
-export function restaurantJsonLd() {
-  const id = absUrl("/#restaurant") ?? "urn:fornolume:restaurant";
-  const url = absUrl("/");
-  const openingHoursSpecification = site.hoursWeekly
-    .filter((h) => !h.closed && h.opens && h.closes && h.dayOfWeek)
-    .map((h) => ({
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: h.dayOfWeek,
-      opens: h.opens,
-      closes: h.closes,
-    }));
+export type GenericPageSchemaType =
+  | "WebPage"
+  | "AboutPage"
+  | "CollectionPage"
+  | "ContactPage";
+
+export function genericPageJsonLd(opts: {
+  type: GenericPageSchemaType;
+  path: string;
+  title: string;
+  description: string;
+}) {
+  const websiteUrl = absUrl("/");
+  const pageUrl = absUrl(opts.path);
+  if (!websiteUrl || !pageUrl) return null;
+
+  const websiteId = `${websiteUrl}#website`;
+  const pageId = `${pageUrl}#webpage`;
 
   return {
     "@context": "https://schema.org",
-    "@type": "Restaurant",
-    "@id": id,
-    name: site.brand.name,
-    description: site.brand.shortDescription,
-    servesCuisine: ["Italian", "Pizza", "Mediterranean"],
-    priceRange: "€€",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.contact.streetAddress,
-      addressLocality: site.contact.city,
-      addressRegion: site.contact.region,
-      postalCode: site.contact.postalCode,
-      addressCountry: site.contact.country,
-    },
-    telephone: site.contact.phone,
-    email: site.contact.email,
-    ...(url ? { url } : {}),
-    ...(openingHoursSpecification.length
-      ? { openingHoursSpecification }
-      : {}),
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: websiteUrl,
+        name: site.brand.name,
+        description: site.brand.shortDescription,
+        inLanguage: "it-IT",
+      },
+      {
+        "@type": opts.type,
+        "@id": pageId,
+        url: pageUrl,
+        name: opts.title,
+        description: opts.description,
+        inLanguage: "it-IT",
+        isPartOf: {
+          "@id": websiteId,
+        },
+      },
+    ],
   };
+}
+
+export function jsonLdScripts(value: unknown | null) {
+  if (value == null) return [];
+  return [
+    {
+      type: "application/ld+json" as const,
+      children: JSON.stringify(value).replace(/</g, "\\u003c"),
+    },
+  ];
 }

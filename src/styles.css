@@ -48,6 +48,7 @@
   --color-cream: var(--cream);
   --color-ink: var(--ink);
   --color-terracotta: var(--terracotta);
+  --color-terracotta-ink: var(--terracotta-ink);
   --color-olive: var(--olive);
   --color-gold: var(--gold);
   --color-line: var(--line);
@@ -60,6 +61,7 @@
   --cream: oklch(0.965 0.018 82);
   --ink: oklch(0.22 0.02 60);
   --terracotta: oklch(0.58 0.13 42);
+  --terracotta-ink: oklch(0.52 0.13 42);
   --olive: oklch(0.48 0.06 115);
   --gold: oklch(0.78 0.09 82);
   --line: oklch(0.86 0.02 75);
@@ -71,7 +73,7 @@
   --card-foreground: oklch(0.22 0.02 60);
   --popover: oklch(0.985 0.012 82);
   --popover-foreground: oklch(0.22 0.02 60);
-  --primary: oklch(0.58 0.13 42);
+  --primary: oklch(0.56 0.13 42);
   --primary-foreground: oklch(0.985 0.012 82);
   --secondary: oklch(0.92 0.025 78);
   --secondary-foreground: oklch(0.28 0.03 60);

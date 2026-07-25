@@ -7,7 +7,7 @@ import { CTASection } from "@/components/site/CTASection";
 import { Reveal } from "@/components/site/Reveal";
 import { menu } from "@/config/menu";
 import { pagesMeta } from "@/config/pages";
-import { seoMeta, seoLinks } from "@/lib/seo";
+import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/menu")({
   head: () => ({
@@ -17,6 +17,14 @@ export const Route = createFileRoute("/menu")({
       path: "/menu",
     }),
     links: seoLinks("/menu"),
+    scripts: jsonLdScripts(
+      genericPageJsonLd({
+        type: "WebPage",
+        path: "/menu",
+        title: pagesMeta.menu.title,
+        description: pagesMeta.menu.description,
+      }),
+    ),
   }),
   component: MenuPage,
 });

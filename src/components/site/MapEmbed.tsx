@@ -31,7 +31,7 @@ export function MapEmbed() {
             {site.contact.address}
           </span>
         </span>
-        <span className="inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-terracotta/10 px-3 py-1.5 text-xs font-medium text-terracotta">
+        <span className="inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-terracotta/10 px-3 py-1.5 text-xs font-medium text-terracotta-ink">
           Apri su Maps
           <ArrowUpRight className="h-3.5 w-3.5" />
         </span>

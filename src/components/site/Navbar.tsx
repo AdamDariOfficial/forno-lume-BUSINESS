@@ -160,11 +160,11 @@ export function Navbar() {
               activeOptions={n.to === "/" ? { exact: true } : undefined}
               activeProps={{
                 className:
-                  "relative text-sm text-terracotta after:absolute after:-bottom-1.5 after:left-1/2 after:h-[2px] after:w-4 after:-translate-x-1/2 after:rounded-full after:bg-terracotta after:content-['']",
+                  "relative text-sm text-terracotta-ink after:absolute after:-bottom-1.5 after:left-1/2 after:h-[2px] after:w-4 after:-translate-x-1/2 after:rounded-full after:bg-terracotta after:content-['']",
               }}
               inactiveProps={{
                 className:
-                  "relative text-sm text-foreground/80 transition-colors hover:text-terracotta",
+                  "relative text-sm text-foreground/80 transition-colors hover:text-terracotta-ink",
               }}
             >
               {n.label}
@@ -258,7 +258,7 @@ export function Navbar() {
                       onClick={() => close(false)}
                       activeProps={{
                         className:
-                          `flex items-center justify-between ${linkBorderClass} py-4 text-base text-terracotta transition-colors duration-300`,
+                          `flex items-center justify-between ${linkBorderClass} py-4 text-base text-terracotta-ink transition-colors duration-300`,
                       }}
                       inactiveProps={{
                         className:
