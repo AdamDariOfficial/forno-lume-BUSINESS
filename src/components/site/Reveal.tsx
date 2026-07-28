@@ -13,7 +13,6 @@ export function Reveal({
   className = "",
   delay = 0,
   as: Tag = "div",
-  variant = "default",
 }: Props) {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -54,7 +53,7 @@ export function Reveal({
   return (
     <Tag
       ref={setElementRef}
-      className={`reveal ${variant === "image" ? "reveal-image" : ""} ${visible ? "reveal-in" : ""} ${className}`}
+      className={`reveal ${visible ? "reveal-in" : ""} ${className}`}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
