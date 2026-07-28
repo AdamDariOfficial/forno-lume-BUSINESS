@@ -80,28 +80,19 @@ function Hero() {
         }}
       />
       <div className="container-page grid gap-10 pb-16 pt-8 md:grid-cols-12 md:gap-12 md:pb-24 md:pt-14">
-        <div className="md:col-span-6 md:pt-10">
-          <p className="eyebrow fade-up">{site.brand.kicker}</p>
-          <h1
-            className="fade-up mt-5 text-[2.6rem] leading-[1.05] font-medium tracking-tight text-foreground sm:text-6xl md:text-[4.2rem]"
-            style={{ animationDelay: "80ms" }}
-          >
+        <div className="fade-up md:col-span-6 md:pt-10">
+          <p className="eyebrow">{site.brand.kicker}</p>
+          <h1 className="mt-5 text-[2.6rem] leading-[1.05] font-medium tracking-tight text-foreground sm:text-6xl md:text-[4.2rem]">
             Cucina semplice,
             <br />
             <span className="italic text-terracotta">atmosfera calda</span>,
             <br />
             dettagli curati.
           </h1>
-          <p
-            className="fade-up mt-6 max-w-xl text-base text-muted-foreground md:text-lg"
-            style={{ animationDelay: "160ms" }}
-          >
+          <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
             {site.brand.description}
           </p>
-          <div
-            className="fade-up mt-8 flex flex-wrap gap-3"
-            style={{ animationDelay: "240ms" }}
-          >
+          <div className="mt-8 flex flex-wrap gap-3">
             <a
               href={waLink(site.contact.whatsappReserveMessage)}
               target="_blank"
@@ -119,10 +110,7 @@ function Hero() {
               Scopri il menu
             </Link>
           </div>
-          <div
-            className="fade-up mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-border pt-6 text-xs text-muted-foreground"
-            style={{ animationDelay: "240ms" }}
-          >
+          <div className="mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
             <div className="flex flex-col gap-1">
               <Clock className="h-4 w-4 text-terracotta" />
               <span>Mar–Dom<br />18:30–23:00</span>
@@ -137,10 +125,7 @@ function Hero() {
             </div>
           </div>
         </div>
-        <div
-          className="fade-up md:col-span-6"
-          style={{ animationDelay: "240ms" }}
-        >
+        <div className="fade-up md:col-span-6">
           <div className="relative">
             <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-gradient-to-br from-accent/40 to-terracotta/10 blur-2xl" />
             <div className="overflow-hidden rounded-[1.75rem] border border-border shadow-[var(--shadow-warm)]">
@@ -171,15 +156,14 @@ function TrustStrip() {
   return (
     <section className="border-y border-border bg-secondary/40">
       <div className="container-page grid grid-cols-2 gap-6 py-8 md:grid-cols-4 md:gap-4 md:py-10">
-        {homeContent.trust.map((t, i) => (
-          <Reveal
-            key={t.label}
-            delay={i * 60}
+        {homeContent.trust.map((item) => (
+          <div
+            key={item.label}
             className="flex items-center gap-3 text-sm md:justify-center"
           >
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-terracotta" />
-            <span className="text-foreground/80">{t.label}</span>
-          </Reveal>
+            <span className="text-foreground/80">{item.label}</span>
+          </div>
         ))}
       </div>
     </section>
@@ -190,7 +174,7 @@ function TrustStrip() {
    e CTA verso /chi-siamo. */
 function IntroSection() {
   return (
-    <section className="container-page py-20 md:py-28">
+    <section data-navbar-threshold className="container-page py-20 md:py-28">
       <div className="grid items-center gap-10 md:grid-cols-12 md:gap-14">
         <div className="md:order-2 md:col-span-7">
           <SectionHeading
@@ -370,7 +354,7 @@ function ExperienceTrio() {
 /* Gallery preview */
 function GalleryPreview() {
   return (
-    <section className="container-page pb-20 md:pb-28">
+    <section className="container-page py-20 md:py-28">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <SectionHeading
           eyebrow={homeContent.galleryPreview.eyebrow}
@@ -442,10 +426,6 @@ function PracticalPreview() {
         </div>
         <Reveal delay={240} className="min-w-0 md:col-span-7">
           <MapEmbed />
-          <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-            <span>{site.contact.address}</span>
-          </p>
         </Reveal>
       </div>
     </section>

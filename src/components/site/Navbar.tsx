@@ -4,45 +4,46 @@ import { Menu, X } from "lucide-react";
 import { site, primaryCtaHref } from "@/config/site";
 import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 
-// Navbar
-// - Route-based (no scroll-spy on hash anchors).
-// - On the homepage keeps the validated "hidden inside hero, appears after
-//   the hero threshold" behavior.
-// - On every other route it is visible immediately.
-// - Home link uses exact matching (so it isn't active on /menu, etc.).
+// BUSINESS preserves START's perceived navbar behavior while keeping
+// route-based navigation and active states for the multipage architecture.
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const [heroVisible, setHeroVisible] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [visible, setVisible] = useState(false);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const rafRef = useRef<number | null>(null);
   const modalRef = useRef<HTMLElement | null>(null);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const firstDrawerLinkRef = useRef<HTMLAnchorElement | null>(null);
   const restoreFocusRef = useRef(false);
 
   const isHome = pathname === "/";
 
-  // Homepage-only: navbar is hidden until the user has scrolled past ~35%
-  // of the viewport, then appears with a soft transition (validated
-  // behavior from START).
+  // Match START: hidden inside the hero and revealed as the first editorial
+  // section approaches the viewport. Internal routes remain visible at once.
   useEffect(() => {
     if (!isHome) {
-      setHeroVisible(true);
+      setVisible(true);
       return;
     }
 
-    setHeroVisible(false);
-
     const compute = () => {
       rafRef.current = null;
-      const y = window.scrollY;
-      const threshold = window.innerHeight * 0.35;
-      setHeroVisible(y >= threshold);
+      const scrollY = window.scrollY;
+      const marker = document.querySelector<HTMLElement>("[data-navbar-threshold]");
+
+      if (!marker) {
+        setVisible(scrollY >= window.innerHeight * 0.35);
+        return;
+      }
+
+      const markerTop = marker.getBoundingClientRect().top + scrollY;
+      setVisible(scrollY + 120 >= markerTop);
     };
 
     const onScroll = () => {
       if (rafRef.current != null) return;
-      rafRef.current = requestAnimationFrame(compute);
+      rafRef.current = window.requestAnimationFrame(compute);
     };
 
     compute();
@@ -51,57 +52,46 @@ export function Navbar() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      if (rafRef.current != null) window.cancelAnimationFrame(rafRef.current);
     };
   }, [isHome]);
 
-  // Close the mobile dialog whenever the desktop breakpoint is reached.
+  // Close the mobile dialog at the desktop breakpoint.
   useEffect(() => {
-    const closeOnDesktop = () => {
-      if (window.innerWidth < 768) return;
-
+    const media = window.matchMedia("(min-width: 768px)");
+    const onChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) return;
       restoreFocusRef.current = false;
-      setOpen((current) => (current ? false : current));
+      setOpen(false);
     };
 
-    const mq = window.matchMedia("(min-width: 768px)");
-    mq.addEventListener("change", closeOnDesktop);
-    window.addEventListener("resize", closeOnDesktop);
-    closeOnDesktop();
-
-    return () => {
-      mq.removeEventListener("change", closeOnDesktop);
-      window.removeEventListener("resize", closeOnDesktop);
-    };
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
   }, []);
 
-  // Some viewport updates do not dispatch resize or media-query events. Keep
-  // this fallback active only while the mobile dialog is open.
-  useEffect(() => {
-    if (!open) return;
-
-    const closeIfDesktop = () => {
-      if (window.innerWidth < 768) return false;
-
-      restoreFocusRef.current = false;
-      setOpen((current) => (current ? false : current));
-      return true;
-    };
-
-    if (closeIfDesktop()) return;
-
-    const checkBreakpoint = window.setInterval(() => {
-      if (closeIfDesktop()) window.clearInterval(checkBreakpoint);
-    }, 150);
-
-    return () => window.clearInterval(checkBreakpoint);
-  }, [open]);
-
-  // Close drawer on route change.
+  // Close the mobile dialog after route navigation.
   useEffect(() => {
     restoreFocusRef.current = false;
     setOpen(false);
   }, [pathname]);
+
+  // Reliable click-outside behavior, matching the corrected START menu.
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (drawerRef.current?.contains(target)) return;
+      if (menuTriggerRef.current?.contains(target)) return;
+
+      restoreFocusRef.current = true;
+      setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
 
   const close = (shouldRestoreFocus = true) => {
     if (!open) return;
@@ -118,8 +108,7 @@ export function Navbar() {
     onEscape: () => close(),
   });
 
-  // Drawer forces visibility regardless of scroll position.
-  const shown = heroVisible || open || !isHome;
+  const shown = visible || open || !isHome;
 
   return (
     <header
@@ -130,11 +119,11 @@ export function Navbar() {
       aria-hidden={shown ? undefined : true}
       inert={!shown}
       tabIndex={open ? -1 : undefined}
-      className={`fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md transition-[opacity,translate,transform] duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] [will-change:opacity,translate,transform] ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md transition-[opacity,transform,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [will-change:opacity,transform] ${
         shown
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 -translate-y-full pointer-events-none"
-      } motion-reduce:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none`}
+      } motion-reduce:transition-opacity motion-reduce:transform-none`}
     >
       <div className="container-page flex h-16 items-center justify-between md:h-20">
         <Link
@@ -153,23 +142,30 @@ export function Navbar() {
           className="hidden items-center gap-8 md:flex"
           aria-label="Navigazione principale"
         >
-          {site.mainNav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              activeOptions={n.to === "/" ? { exact: true } : undefined}
-              activeProps={{
-                className:
-                  "relative text-sm text-terracotta-ink after:absolute after:-bottom-1.5 after:left-1/2 after:h-[2px] after:w-4 after:-translate-x-1/2 after:rounded-full after:bg-terracotta after:content-['']",
-              }}
-              inactiveProps={{
-                className:
-                  "relative text-sm text-foreground/80 transition-colors hover:text-terracotta-ink",
-              }}
-            >
-              {n.label}
-            </Link>
-          ))}
+          {site.mainNav.map((item) => {
+            const active = pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                activeOptions={item.to === "/" ? { exact: true } : undefined}
+                aria-current={active ? "page" : undefined}
+                className={`relative text-sm transition-colors ${
+                  active
+                    ? "text-terracotta-ink"
+                    : "text-foreground/80 hover:text-terracotta-ink"
+                }`}
+              >
+                {item.label}
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute -bottom-1.5 left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-terracotta transition-all duration-300 ${
+                    active ? "w-4 opacity-100" : "w-0 opacity-0"
+                  }`}
+                />
+              </Link>
+            );
+          })}
         </nav>
 
         <a
@@ -187,6 +183,7 @@ export function Navbar() {
           type="button"
           aria-label={open ? "Chiudi menu" : "Apri menu"}
           aria-expanded={open}
+          aria-haspopup="dialog"
           aria-controls="mobile-nav"
           onClick={() => {
             if (open) {
@@ -200,80 +197,56 @@ export function Navbar() {
         >
           <Menu
             aria-hidden="true"
-            className={`absolute h-5 w-5 transition-[opacity,transform] duration-300 motion-reduce:transform-none motion-reduce:transition-none ${
+            className={`absolute h-5 w-5 transition-all duration-300 ${
               open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
             }`}
           />
           <X
             aria-hidden="true"
-            className={`absolute h-5 w-5 transition-[opacity,transform] duration-300 motion-reduce:transform-none motion-reduce:transition-none ${
+            className={`absolute h-5 w-5 transition-all duration-300 ${
               open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
             }`}
           />
         </button>
       </div>
 
-      {/* Overlay */}
       <div
-        aria-hidden
-        onClick={() => close()}
-        className={`absolute inset-x-0 top-full z-40 h-[calc(100dvh-4rem)] bg-ink/30 backdrop-blur-sm transition-opacity duration-300 motion-reduce:transition-none md:hidden ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      />
-
-      {/* Drawer */}
-      <div
+        ref={drawerRef}
         id="mobile-nav"
         aria-hidden={open ? undefined : true}
         inert={!open}
-        className={`absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-[max-height,opacity,translate,transform] duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none md:hidden ${
+        className={`absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-all duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
           open
             ? "max-h-[80vh] opacity-100 translate-y-0"
             : "max-h-0 opacity-0 -translate-y-2"
-        }`}
+        } motion-reduce:transition-none motion-reduce:transform-none`}
       >
         <div className="container-page pb-6 pt-2">
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-warm)]">
+          <div className="rounded-2xl border border-border bg-card/95 p-4 shadow-[var(--shadow-soft)] backdrop-blur">
             <nav className="flex flex-col" aria-label="Navigazione mobile">
-              {site.mainNav.map((n, i) => {
-                const isActive = pathname === n.to;
-                const linkBorderClass =
-                  i === site.mainNav.length - 1
-                    ? "border-b-0"
-                    : "border-b border-border/60";
-
+              {site.mainNav.map((item, index) => {
+                const active = pathname === item.to;
                 return (
-                  <div
-                    key={n.to}
-                    className={`transition-[opacity,translate] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-x-0 motion-reduce:transition-none ${
+                  <Link
+                    ref={index === 0 ? firstDrawerLinkRef : undefined}
+                    key={item.to}
+                    to={item.to}
+                    activeOptions={item.to === "/" ? { exact: true } : undefined}
+                    onClick={() => close(false)}
+                    aria-current={active ? "page" : undefined}
+                    style={{ transitionDelay: `${open ? index * 40 : 0}ms` }}
+                    className={`flex items-center justify-between border-b border-border/60 py-4 text-base transition-all duration-300 last:border-b-0 ${
                       open ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
-                    }`}
-                    style={{ transitionDelay: open ? `${i * 40}ms` : "0ms" }}
+                    } ${active ? "text-terracotta-ink" : ""}`}
                   >
-                    <Link
-                      ref={i === 0 ? firstDrawerLinkRef : undefined}
-                      to={n.to}
-                      activeOptions={n.to === "/" ? { exact: true } : undefined}
-                      onClick={() => close(false)}
-                      activeProps={{
-                        className:
-                          `flex items-center justify-between ${linkBorderClass} py-4 text-base text-terracotta-ink transition-colors duration-300`,
-                      }}
-                      inactiveProps={{
-                        className:
-                          `flex items-center justify-between ${linkBorderClass} py-4 text-base transition-colors duration-300`,
-                      }}
-                    >
-                      <span>{n.label}</span>
-                      {isActive && (
-                        <span
-                          aria-hidden="true"
-                          className="h-1.5 w-1.5 rounded-full bg-terracotta"
-                        />
-                      )}
-                    </Link>
-                  </div>
+                    <span>{item.label}</span>
+                    {active && (
+                      <span
+                        aria-hidden="true"
+                        className="h-1.5 w-1.5 rounded-full bg-terracotta"
+                      />
+                    )}
+                  </Link>
                 );
               })}
             </nav>
@@ -281,7 +254,7 @@ export function Navbar() {
               href={primaryCtaHref()}
               target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
               rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
-              onClick={() => close()}
+              onClick={() => close(false)}
               className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)]"
             >
               {site.primaryCta.label}

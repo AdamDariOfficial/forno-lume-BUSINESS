@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 
-// Compact internal page hero. Includes its own vertical rhythm; because
-// SiteLayout already reserves navbar height (pt-16/pt-20), PageHero adds
-// generous top padding for breathing space, not to compensate the navbar.
+// Internal page hero with the same restrained entrance language as START:
+// one composed fade, rather than a mechanical stagger for every text element.
 export function PageHero({
   eyebrow,
   title,
@@ -10,11 +9,12 @@ export function PageHero({
   children,
 }: {
   eyebrow: string;
-  title: string; // may contain \n for line breaks
+  title: string;
   subtitle?: string;
   children?: ReactNode;
 }) {
   const lines = title.split("\n");
+
   return (
     <section className="relative overflow-hidden">
       <div
@@ -26,31 +26,23 @@ export function PageHero({
         }}
       />
       <div className="container-page pb-14 pt-16 md:pb-20 md:pt-24">
-        <p className="eyebrow fade-up">{eyebrow}</p>
-        <h1
-          className="fade-up mt-5 max-w-3xl text-[2.4rem] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl"
-          style={{ animationDelay: "80ms" }}
-        >
-          {lines.map((l, i) => (
-            <span key={i} className="block">
-              {l}
-              {i < lines.length - 1 ? " " : ""}
-            </span>
-          ))}
-        </h1>
-        {subtitle && (
-          <p
-            className="fade-up mt-6 max-w-2xl text-base text-muted-foreground md:text-lg"
-            style={{ animationDelay: "160ms" }}
-          >
-            {subtitle}
-          </p>
-        )}
-        {children && (
-          <div className="fade-up mt-8" style={{ animationDelay: "240ms" }}>
-            {children}
-          </div>
-        )}
+        <div className="fade-up">
+          <p className="eyebrow">{eyebrow}</p>
+          <h1 className="mt-5 max-w-3xl text-[2.4rem] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+            {lines.map((line, index) => (
+              <span key={index} className="block">
+                {line}
+                {index < lines.length - 1 ? " " : ""}
+              </span>
+            ))}
+          </h1>
+          {subtitle && (
+            <p className="mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+              {subtitle}
+            </p>
+          )}
+          {children && <div className="mt-8">{children}</div>}
+        </div>
       </div>
     </section>
   );

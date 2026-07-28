@@ -91,7 +91,7 @@ export const site = {
   ] satisfies readonly MainNavItem[],
 
   primaryCta: {
-    label: "Prenota",
+    label: "Prenota un tavolo",
     // "whatsapp" | "tel" — component decides how to render the link
     kind: "whatsapp" as const,
   },
