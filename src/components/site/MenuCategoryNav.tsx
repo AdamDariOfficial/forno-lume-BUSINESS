@@ -1,9 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { MenuCategory } from "@/config/menu";
+
+type IndicatorGeometry = {
+  left: number;
+  width: number;
+};
 
 // Sticky category selector: horizontally scrollable on mobile without
 // causing page-level overflow. Uses IntersectionObserver to track the
-// currently visible category.
+// currently visible category and a shared underline to animate state changes.
 export function MenuCategoryNav({
   categories,
   offsetPx = 96,
@@ -12,9 +17,24 @@ export function MenuCategoryNav({
   offsetPx?: number;
 }) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? "");
+  const [indicator, setIndicator] = useState<IndicatorGeometry | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const navListRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const didInitialScroll = useRef(false);
+
+  const updateIndicator = useCallback(() => {
+    const item = itemRefs.current.get(active);
+    const list = navListRef.current;
+    if (!item || !list) return;
+
+    const itemRect = item.getBoundingClientRect();
+    const listRect = list.getBoundingClientRect();
+    setIndicator({
+      left: itemRect.left - listRect.left,
+      width: itemRect.width,
+    });
+  }, [active]);
 
   useEffect(() => {
     const ids = categories.map((c) => c.id);
@@ -25,7 +45,6 @@ export function MenuCategoryNav({
 
     const io = new IntersectionObserver(
       (entries) => {
-        // Pick the entry closest to the top that is intersecting.
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -42,8 +61,6 @@ export function MenuCategoryNav({
     return () => io.disconnect();
   }, [categories, offsetPx]);
 
-  // Keep the active category visible inside the horizontally-scrollable
-  // bar. Skip the very first run so we do not scroll the page on mount.
   useEffect(() => {
     if (!didInitialScroll.current) {
       didInitialScroll.current = true;
@@ -66,10 +83,33 @@ export function MenuCategoryNav({
     });
   }, [active]);
 
+  useEffect(() => {
+    let frame = window.requestAnimationFrame(updateIndicator);
+    const list = navListRef.current;
+    const item = itemRefs.current.get(active);
+    const observer =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(updateIndicator)
+        : null;
+
+    if (list) observer?.observe(list);
+    if (item) observer?.observe(item);
+    window.addEventListener("resize", updateIndicator);
+
+    void document.fonts?.ready.then(() => {
+      frame = window.requestAnimationFrame(updateIndicator);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener("resize", updateIndicator);
+    };
+  }, [active, updateIndicator]);
+
   return (
     <div className="sticky top-16 z-30 md:top-20">
       <div className="relative border-y border-border bg-background/95 backdrop-blur">
-        {/* Edge fades — hint at scrollability without covering text */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-background to-transparent md:hidden"
@@ -84,7 +124,10 @@ export function MenuCategoryNav({
           style={{ scrollPaddingInline: "1.25rem" }}
         >
           <nav aria-label="Categorie del menu">
-            <ul className="flex w-max gap-6 px-5 py-3.5 md:mx-auto md:max-w-6xl md:gap-8 md:px-8">
+            <ul
+              ref={navListRef}
+              className="relative flex w-max gap-6 px-5 py-3.5 md:mx-auto md:max-w-6xl md:gap-8 md:px-8"
+            >
               {categories.map((c) => {
                 const isActive = c.id === active;
                 return (
@@ -95,11 +138,12 @@ export function MenuCategoryNav({
                         else itemRefs.current.delete(c.id);
                       }}
                       href={`#${c.id}`}
+                      onClick={() => setActive(c.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`inline-block whitespace-nowrap border-b-2 pb-1 text-sm transition-colors ${
+                      className={`inline-block whitespace-nowrap pb-1 text-sm transition-colors duration-300 ${
                         isActive
-                          ? "border-terracotta text-terracotta-ink"
-                          : "border-transparent text-foreground/70 hover:text-terracotta-ink"
+                          ? "text-terracotta-ink"
+                          : "text-foreground/70 hover:text-terracotta-ink"
                       }`}
                     >
                       {c.label}
@@ -107,6 +151,17 @@ export function MenuCategoryNav({
                   </li>
                 );
               })}
+              <li
+                aria-hidden="true"
+                role="presentation"
+                className={`pointer-events-none absolute bottom-[0.875rem] left-0 h-0.5 rounded-full bg-terracotta transition-[width,transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                  indicator ? "opacity-100" : "opacity-0"
+                }`}
+                style={{
+                  width: indicator?.width ?? 0,
+                  transform: `translateX(${indicator?.left ?? 0}px)`,
+                }}
+              />
             </ul>
           </nav>
         </div>
