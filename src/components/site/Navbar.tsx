@@ -151,9 +151,7 @@ export function Navbar() {
                 activeOptions={item.to === "/" ? { exact: true } : undefined}
                 aria-current={active ? "page" : undefined}
                 className={`relative text-sm transition-colors ${
-                  active
-                    ? "text-terracotta-ink"
-                    : "text-foreground/80 hover:text-terracotta-ink"
+                  active ? "text-terracotta-ink" : "text-foreground/80 hover:text-terracotta-ink"
                 }`}
               >
                 {item.label}
@@ -193,7 +191,7 @@ export function Navbar() {
               setOpen(true);
             }
           }}
-          className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur md:hidden"
+          className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur md:hidden"
         >
           <Menu
             aria-hidden="true"
@@ -215,10 +213,10 @@ export function Navbar() {
         id="mobile-nav"
         aria-hidden={open ? undefined : true}
         inert={!open}
-        className={`absolute inset-x-0 top-full z-50 origin-top overflow-hidden transition-all duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
+        className={`absolute inset-x-0 top-full z-50 origin-top transition-all duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
           open
-            ? "max-h-[80vh] opacity-100 translate-y-0"
-            : "max-h-0 opacity-0 -translate-y-2"
+            ? "max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain opacity-100 translate-y-0"
+            : "max-h-0 overflow-hidden opacity-0 -translate-y-2"
         } motion-reduce:transition-none motion-reduce:transform-none`}
       >
         <div className="container-page pb-6 pt-2">
@@ -241,10 +239,7 @@ export function Navbar() {
                   >
                     <span>{item.label}</span>
                     {active && (
-                      <span
-                        aria-hidden="true"
-                        className="h-1.5 w-1.5 rounded-full bg-terracotta"
-                      />
+                      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-terracotta" />
                     )}
                   </Link>
                 );

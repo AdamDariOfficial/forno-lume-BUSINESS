@@ -11,7 +11,7 @@ type IndicatorGeometry = {
 // currently visible category and a shared underline to animate state changes.
 export function MenuCategoryNav({
   categories,
-  offsetPx = 96,
+  offsetPx = 140,
 }: {
   categories: readonly MenuCategory[];
   offsetPx?: number;
@@ -73,10 +73,7 @@ export function MenuCategoryNav({
     const elRect = el.getBoundingClientRect();
     const cRect = container.getBoundingClientRect();
     const target =
-      container.scrollLeft +
-      (elRect.left - cRect.left) -
-      cRect.width / 2 +
-      elRect.width / 2;
+      container.scrollLeft + (elRect.left - cRect.left) - cRect.width / 2 + elRect.width / 2;
     container.scrollTo({
       left: Math.max(target, 0),
       behavior: reduced ? "auto" : "smooth",
@@ -88,9 +85,7 @@ export function MenuCategoryNav({
     const list = navListRef.current;
     const item = itemRefs.current.get(active);
     const observer =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(updateIndicator)
-        : null;
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateIndicator) : null;
 
     if (list) observer?.observe(list);
     if (item) observer?.observe(item);
@@ -126,7 +121,7 @@ export function MenuCategoryNav({
           <nav aria-label="Categorie del menu">
             <ul
               ref={navListRef}
-              className="relative flex w-max gap-6 px-5 py-3.5 md:mx-auto md:max-w-6xl md:gap-8 md:px-8"
+              className="relative flex w-max gap-6 px-5 py-1 md:mx-auto md:max-w-6xl md:gap-8 md:px-8"
             >
               {categories.map((c) => {
                 const isActive = c.id === active;
@@ -140,7 +135,7 @@ export function MenuCategoryNav({
                       href={`#${c.id}`}
                       onClick={() => setActive(c.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`inline-block whitespace-nowrap pb-1 text-sm transition-colors duration-300 ${
+                      className={`inline-flex min-h-11 items-center whitespace-nowrap text-sm transition-colors duration-300 ${
                         isActive
                           ? "text-terracotta-ink"
                           : "text-foreground/70 hover:text-terracotta-ink"
@@ -154,7 +149,7 @@ export function MenuCategoryNav({
               <li
                 aria-hidden="true"
                 role="presentation"
-                className={`pointer-events-none absolute bottom-[0.875rem] left-0 h-0.5 rounded-full bg-terracotta transition-[width,transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                className={`pointer-events-none absolute bottom-1 left-0 h-0.5 rounded-full bg-terracotta transition-[width,transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
                   indicator ? "opacity-100" : "opacity-0"
                 }`}
                 style={{

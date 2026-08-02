@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
+
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type Props = {
   children: ReactNode;
@@ -8,34 +10,25 @@ type Props = {
   variant?: "default" | "image";
 };
 
-export function Reveal({
-  children,
-  className = "",
-  delay = 0,
-  as: Tag = "div",
-}: Props) {
+export function Reveal({ children, className = "", delay = 0, as: Tag = "div" }: Props) {
   const ref = useRef<HTMLElement | null>(null);
-  const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setVisible(true);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
-    if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
-    }
+    if (!("IntersectionObserver" in window)) return;
+
+    el.classList.add("reveal-pending");
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            setVisible(true);
+            el.classList.remove("reveal-pending");
+            el.classList.add("reveal-in");
             io.disconnect();
           }
         });
@@ -53,7 +46,7 @@ export function Reveal({
   return (
     <Tag
       ref={setElementRef}
-      className={`reveal ${visible ? "reveal-in" : ""} ${className}`}
+      className={`reveal ${className}`}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
