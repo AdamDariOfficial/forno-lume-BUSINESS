@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 import { RouteErrorFallback } from "../components/site/RouteErrorFallback";
+import { RouteFocus } from "../components/site/RouteFocus";
 import { pagesMeta } from "../config/pages";
 import { site } from "../config/site";
 
@@ -71,9 +72,7 @@ function NotFoundComponent() {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: ({ matches }) => {
-    const isNotFound = matches.some(
-      (match) => match.status === "notFound" || match.globalNotFound,
-    );
+    const isNotFound = matches.some((match) => match.status === "notFound" || match.globalNotFound);
     const title = isNotFound ? pagesMeta.notFound.title : SITE_TITLE;
     const description = isNotFound ? pagesMeta.notFound.description : SITE_DESC;
 
@@ -137,6 +136,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
+      <RouteFocus />
       <Outlet />
     </QueryClientProvider>
   );

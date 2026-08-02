@@ -8,7 +8,7 @@ export function MenuCategorySection({ category }: { category: MenuCategory }) {
     <section
       id={category.id}
       aria-labelledby={`${category.id}-title`}
-      className="menu-category scroll-mt-28 py-14 md:py-20"
+      className="menu-category scroll-mt-36 py-14 md:scroll-mt-40 md:py-20"
     >
       <div className="grid gap-8 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-4">
@@ -38,16 +38,10 @@ export function MenuCategorySection({ category }: { category: MenuCategory }) {
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <p className="font-display text-xl leading-tight">
-                      {item.name}
-                    </p>
-                    {item.tags && item.tags.length > 0 && (
-                      <TagList tags={item.tags} />
-                    )}
+                    <p className="font-display text-xl leading-tight">{item.name}</p>
+                    {item.tags && item.tags.length > 0 && <TagList tags={item.tags} />}
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {item.desc}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
                 </div>
                 <span
                   aria-label={`Prezzo ${item.price} euro`}
@@ -80,18 +74,11 @@ function TagList({ tags }: { tags: MenuTag[] }) {
 }
 
 // Compact preview used on the homepage — single column, no category header.
-export function MenuPreviewList({
-  items,
-}: {
-  items: readonly import("@/config/menu").MenuItem[];
-}) {
+export function MenuPreviewList({ items }: { items: readonly import("@/config/menu").MenuItem[] }) {
   return (
     <ul className="divide-y divide-border/70">
       {items.map((item) => (
-        <li
-          key={item.id}
-          className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-5"
-        >
+        <li key={item.id} className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <p className="font-display text-xl leading-tight">{item.name}</p>
