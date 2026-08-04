@@ -1,5 +1,6 @@
-// Gallery images. Reuses START assets first; extra images generated for
-// the BUSINESS gallery live under src/assets/gallery/ and are added here.
+// Real editorial photography approved for the BUSINESS demo.
+// Exact source, license, dimensions and SHA-256 values are recorded in
+// docs/ASSET_PROVENANCE.md.
 
 import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/about.jpg";
@@ -23,15 +24,15 @@ export const gallery: GalleryImage[] = [
   {
     id: "sala-hero",
     src: heroImg,
-    alt: "Interno di Forno Lume con forno a legna acceso e pizza in primo piano",
-    w: 1600,
-    h: 1808,
+    alt: "Una pizza artigianale viene infornata nel forno a legna",
+    w: 1440,
+    h: 1620,
     span: "tall",
   },
   {
     id: "forno-lavoro",
     src: forno,
-    alt: "Il forno a legna acceso, con la fiamma che riscalda la volta",
+    alt: "Una pizza cuoce nel calore di un forno a legna tradizionale",
     w: 1600,
     h: 1200,
     span: "wide",
@@ -39,31 +40,31 @@ export const gallery: GalleryImage[] = [
   {
     id: "impasto",
     src: aboutImg,
-    alt: "Le mani del fornaio lavorano l'impasto sul tagliere infarinato",
-    w: 1408,
-    h: 1600,
+    alt: "Le mani di un pizzaiolo completano una base con pomodoro e mozzarella",
+    w: 1200,
+    h: 1500,
     span: "normal",
   },
   {
     id: "burrata",
     src: dishImg,
-    alt: "Burrata con pomodorini datterino e basilico servita su ceramica rustica",
-    w: 1408,
-    h: 1408,
+    alt: "Pizza Margherita servita su un tavolo rustico",
+    w: 1400,
+    h: 1400,
     span: "normal",
   },
   {
     id: "piatto-stagione",
     src: piatto,
-    alt: "Piatto di verdure arrostite con crema alle erbe fresche",
-    w: 1408,
-    h: 1408,
+    alt: "Piatto di pasta ai frutti di mare con olive e calice di vino",
+    w: 1400,
+    h: 1400,
     span: "normal",
   },
   {
     id: "tavolo",
     src: tavolo,
-    alt: "Tavolo apparecchiato con calice di vino rosso e pane caldo",
+    alt: "Tavolo rustico apparecchiato con vino e luce calda",
     w: 1600,
     h: 1200,
     span: "wide",
@@ -71,15 +72,15 @@ export const gallery: GalleryImage[] = [
   {
     id: "calice",
     src: calice,
-    alt: "Calice di vino rosso in controluce, atmosfera calda",
-    w: 1408,
-    h: 1600,
+    alt: "Calice di vino rosso in un ristorante dalla luce soffusa",
+    w: 1200,
+    h: 1500,
     span: "tall",
   },
   {
     id: "sala-luce",
     src: sala,
-    alt: "Angolo della sala con luce calda e tavoli in legno",
+    alt: "Interno accogliente di un ristorante italiano con arredi in legno",
     w: 1600,
     h: 1200,
     span: "wide",

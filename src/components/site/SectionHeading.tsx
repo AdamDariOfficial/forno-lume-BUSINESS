@@ -19,26 +19,27 @@ export function SectionHeading({
 
   return (
     <div className={alignClass}>
-      <Reveal>
-        {eyebrow && (
-          <p className={`eyebrow ${align === "center" ? "justify-center" : ""}`}>
-            {eyebrow}
-          </p>
-        )}
-        <h2 className={`${eyebrow ? "mt-4" : ""} text-4xl font-medium leading-[1.1] md:text-5xl`}>
+      {eyebrow && (
+        <Reveal>
+          <p className={`eyebrow ${align === "center" ? "justify-center" : ""}`}>{eyebrow}</p>
+        </Reveal>
+      )}
+      <Reveal delay={eyebrow ? 80 : 0} className={eyebrow ? "mt-4" : ""}>
+        <h2 className="text-4xl font-medium leading-[1.1] md:text-5xl">
           {lines.map((line, index) => (
             <span key={index} className="block">
               {line}
               {index < lines.length - 1 ? " " : ""}
             </span>
           ))}
-          {accent && (
-            <span className="block italic text-terracotta">{accent}</span>
-          )}
+          {accent && <span className="block italic text-terracotta">{accent}</span>}
         </h2>
       </Reveal>
       {children && (
-        <Reveal delay={80} className="mt-4 max-w-2xl text-muted-foreground md:text-lg">
+        <Reveal
+          delay={eyebrow ? 160 : 80}
+          className="mt-4 max-w-2xl text-muted-foreground md:text-lg"
+        >
           {children}
         </Reveal>
       )}

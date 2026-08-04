@@ -36,7 +36,7 @@ function ContactPage() {
     <SiteLayout>
       <PageHero
         eyebrow="Contatti"
-        title={`Ci trovi\nin centro a ${site.contact.city}.`}
+        title={`Ci trovi\nin zona Prato della Valle.`}
         subtitle="Il modo più veloce per prenotare è WhatsApp. Ti rispondiamo in breve tempo con disponibilità e orario."
       />
 
@@ -56,7 +56,7 @@ function ContactPage() {
 
             <Reveal delay={160} className="mt-8">
               <dl className="space-y-5 text-sm">
-                <InfoRow icon={MapPin} label="Indirizzo" value={site.contact.address} />
+                <InfoRow icon={MapPin} label="Zona" value={site.contact.locationLabel} />
                 <InfoRow
                   icon={Phone}
                   label="Telefono"
@@ -70,12 +70,7 @@ function ContactPage() {
                   href={waLink(site.contact.whatsappReserveMessage)}
                   external
                 />
-                <InfoRow
-                  icon={Mail}
-                  label="Email"
-                  value={site.contact.email}
-                  href={mailLink()}
-                />
+                <InfoRow icon={Mail} label="Email" value={site.contact.email} href={mailLink()} />
               </dl>
             </Reveal>
 
@@ -92,10 +87,7 @@ function ContactPage() {
 
           <Reveal delay={240} className="min-w-0 md:col-span-7">
             <MapEmbed />
-            <p className="mt-4 text-sm text-muted-foreground">
-              Siamo in centro a {site.contact.city}, ben serviti da mezzi
-              pubblici e a breve distanza dai principali parcheggi cittadini.
-            </p>
+            <p className="mt-4 text-sm text-muted-foreground">{site.contact.locationDetail}</p>
           </Reveal>
         </div>
       </section>
@@ -128,9 +120,7 @@ function InfoRow({
         <Icon className="h-4 w-4" />
       </div>
       <div className="min-w-0">
-        <dt className="text-xs uppercase tracking-widest text-muted-foreground">
-          {label}
-        </dt>
+        <dt className="text-xs uppercase tracking-widest text-muted-foreground">{label}</dt>
         <dd className="mt-1 text-[15px] text-foreground">{value}</dd>
       </div>
     </div>

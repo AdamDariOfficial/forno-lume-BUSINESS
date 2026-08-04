@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "@/components/site/PolicyLayout";
-import { site } from "@/config/site";
 import { pagesMeta } from "@/config/pages";
 import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 
@@ -28,47 +27,69 @@ function PrivacyPage() {
   return (
     <PolicyLayout
       title="Privacy policy"
-      intro="Questa pagina descrive come vengono trattate le informazioni all'interno di questo sito. È un placeholder pensato per essere adattato all'attività reale."
+      intro="Come vengono gestite le informazioni durante la navigazione e l'uso dei collegamenti esterni."
     >
-      <h2>Natura di questo sito</h2>
-      <p>
-        Il sito di {site.legal.company} è un sito informativo: presenta il
-        locale, il menu, la galleria e i contatti. Non gestisce prenotazioni
-        online reali, non memorizza ordini e non ospita un'area riservata.
-      </p>
+      <section>
+        <h2>Configurazione del sito</h2>
+        <p>
+          Il sito non include account, login, pagamenti, disponibilità in tempo reale o moduli che
+          trasmettono dati a un database applicativo. Le richieste di prenotazione avvengono tramite
+          collegamenti a servizi esterni.
+        </p>
+      </section>
 
-      <h2>Cosa il sito non fa</h2>
-      <ul>
-        <li>Non è presente alcun sistema di login o area riservata.</li>
-        <li>Non vengono raccolti pagamenti online.</li>
-        <li>Non è presente un database che memorizza dati degli utenti.</li>
-        <li>
-          Non vengono gestite prenotazioni reali tramite backend proprio del sito.
-        </li>
-      </ul>
+      <section>
+        <h2>Contatti esterni</h2>
+        <p>
+          I collegamenti a WhatsApp, telefono ed email aprono applicazioni o servizi esterni scelti
+          dall'utente. Le informazioni eventualmente comunicate dopo l'uscita dal sito sono trattate
+          dai rispettivi provider e, in un progetto reale, dal titolare indicato nella versione
+          definitiva dell'informativa.
+        </p>
+      </section>
 
-      <h2>Contatti</h2>
-      <p>
-        Eventuali contatti avvengono esclusivamente tramite servizi esterni come
-        WhatsApp o posta elettronica. I dati che l'utente sceglie di inviare
-        (nome, numero di telefono, testo del messaggio) sono gestiti dai
-        rispettivi provider (es. WhatsApp/Meta, provider email dell'utente e del
-        destinatario), secondo le loro policy.
-      </p>
+      <section>
+        <h2>Dati tecnici di navigazione</h2>
+        <p>
+          L'hosting e le risorse necessarie al caricamento della pagina possono ricevere dati
+          tecnici ordinari, come indirizzo IP, tipo di browser, data e ora della richiesta e
+          informazioni utili alla sicurezza e alla distribuzione dei contenuti.
+        </p>
+      </section>
 
-      <h2>Titolare del trattamento</h2>
-      <p>
-        In un'installazione reale, in questa sezione verranno indicati il
-        titolare del trattamento, la sua sede e i riferimenti di contatto per
-        l'esercizio dei diritti previsti dal GDPR. Nella demo questi campi sono
-        placeholder: {site.legal.company}, {site.contact.address}.
-      </p>
+      <section>
+        <h2>Google Fonts</h2>
+        <p>
+          Il sito richiede i caratteri tipografici a Google Fonts. Durante questa richiesta Google
+          può ricevere dati tecnici della connessione, inclusi indirizzo IP e informazioni del
+          browser necessarie a fornire la risorsa.
+        </p>
+      </section>
 
-      <h2>Modifiche</h2>
-      <p>
-        Il contenuto di questa informativa può essere aggiornato in qualsiasi
-        momento. La data di ultima revisione è indicata in fondo alla pagina.
-      </p>
+      <section>
+        <h2>Mappa Google su richiesta</h2>
+        <p>
+          Le pagine mostrano inizialmente un pannello locale, senza iframe e senza richiesta alla
+          mappa di Google. Il contenuto interattivo viene creato soltanto quando l'utente seleziona
+          “Attiva la mappa interattiva”. Da quel momento il browser comunica con Google, che può
+          ricevere indirizzo IP, informazioni sul dispositivo e altri dati tecnici secondo le
+          proprie condizioni e informative.
+        </p>
+        <p>
+          La mappa può essere disattivata nuovamente dalla pagina. Il collegamento esterno a Google
+          Maps apre invece direttamente il servizio in una nuova scheda.
+        </p>
+      </section>
+
+      <section>
+        <h2>Titolare e diritti</h2>
+        <p>
+          Questa versione dimostrativa utilizza dati di contatto non operativi. Prima della
+          pubblicazione per un cliente reale devono essere indicati titolare del trattamento,
+          contatti, basi giuridiche, destinatari, tempi di conservazione e modalità per esercitare i
+          diritti previsti dalla normativa applicabile.
+        </p>
+      </section>
     </PolicyLayout>
   );
 }

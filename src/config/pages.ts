@@ -25,17 +25,17 @@ export const pagesMeta = {
   contact: {
     title: "Contatti | Forno Lume",
     description:
-      "Indirizzo, orari, telefono, WhatsApp e mappa per raggiungere Forno Lume, in centro a Padova.",
+      "Zona, orari, telefono, WhatsApp, email e mappa attivabile per raggiungere Forno Lume a Padova.",
   },
   privacy: {
     title: "Privacy policy | Forno Lume",
     description:
-      "Informativa privacy di Forno Lume. Nessun database, nessun login, nessun pagamento online.",
+      "Informativa privacy di Forno Lume: navigazione, contatti esterni, Google Fonts e mappa Google attivabile.",
   },
   cookie: {
     title: "Cookie policy | Forno Lume",
     description:
-      "Informativa cookie di Forno Lume. Nessun cookie di profilazione o tracciamento avanzato.",
+      "Informativa cookie di Forno Lume: tecnologie tecniche, risorse esterne e attivazione volontaria della mappa Google.",
   },
   notFound: {
     title: "Pagina non trovata | Forno Lume",
