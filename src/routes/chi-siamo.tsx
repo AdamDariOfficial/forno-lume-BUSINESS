@@ -1,5 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
@@ -57,9 +56,7 @@ function AboutPage() {
               <p className="eyebrow">{origine.eyebrow}</p>
             </Reveal>
             <Reveal delay={80} className="mt-4">
-              <h2 className="font-display text-3xl leading-tight md:text-4xl">
-                {origine.title}
-              </h2>
+              <h2 className="font-display text-3xl leading-tight md:text-4xl">{origine.title}</h2>
             </Reveal>
             <Reveal delay={160} className="mt-5">
               <p className="text-muted-foreground md:text-lg">{origine.body}</p>
@@ -69,10 +66,10 @@ function AboutPage() {
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={aboutImg}
-                alt="Le mani di un fornaio lavorano l'impasto su un tagliere infarinato"
+                alt="Le mani di un pizzaiolo preparano una base con pomodoro e mozzarella"
                 loading="lazy"
-                width={1408}
-                height={1600}
+                width={1200}
+                height={1500}
                 className="h-72 w-full object-cover md:h-[460px]"
               />
             </div>
@@ -107,9 +104,7 @@ function AboutPage() {
               <p className="eyebrow">{forno.eyebrow}</p>
             </Reveal>
             <Reveal delay={80} className="mt-4">
-              <h2 className="font-display text-3xl leading-tight md:text-4xl">
-                {forno.title}
-              </h2>
+              <h2 className="font-display text-3xl leading-tight md:text-4xl">{forno.title}</h2>
             </Reveal>
             <Reveal delay={160} className="mt-5">
               <p className="text-muted-foreground md:text-lg">{forno.body}</p>
@@ -138,9 +133,7 @@ function AboutPage() {
               <p className="eyebrow">{cucina.eyebrow}</p>
             </Reveal>
             <Reveal delay={80} className="mt-4">
-              <h2 className="font-display text-3xl leading-tight md:text-4xl">
-                {cucina.title}
-              </h2>
+              <h2 className="font-display text-3xl leading-tight md:text-4xl">{cucina.title}</h2>
             </Reveal>
             <Reveal delay={160} className="mt-5">
               <p className="text-muted-foreground md:text-lg">{cucina.body}</p>
@@ -150,10 +143,10 @@ function AboutPage() {
             <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
               <img
                 src={piattoImg}
-                alt="Piatto di stagione impiattato con cura"
+                alt="Piatto di pasta ai frutti di mare con olive e calice di vino"
                 loading="lazy"
-                width={1408}
-                height={1408}
+                width={1400}
+                height={1400}
                 className="aspect-[4/5] w-full object-cover md:aspect-auto md:h-[480px]"
               />
             </div>
@@ -164,13 +157,16 @@ function AboutPage() {
       {/* Ingredienti + Atmosfera — sezione conclusiva con grande immagine */}
       <section className="border-t border-border bg-secondary/30">
         <div className="container-page py-20 md:py-28">
-          <Reveal variant="image" className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
+          <Reveal
+            variant="image"
+            className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]"
+          >
             <img
               src={salaImg}
-              alt="Angolo della sala con luce calda e tavoli in legno"
+              alt="Interno accogliente di un ristorante italiano con arredi in legno"
               loading="lazy"
               width={1600}
-              height={1000}
+              height={1200}
               className="h-72 w-full object-cover md:h-[520px]"
             />
           </Reveal>
@@ -185,9 +181,7 @@ function AboutPage() {
                 </h2>
               </Reveal>
               <Reveal delay={160} className="mt-4">
-                <p className="text-muted-foreground md:text-lg">
-                  {ingredienti.body}
-                </p>
+                <p className="text-muted-foreground md:text-lg">{ingredienti.body}</p>
               </Reveal>
             </div>
             <div>
@@ -200,32 +194,11 @@ function AboutPage() {
                 </h2>
               </Reveal>
               <Reveal delay={160} className="mt-4">
-                <p className="text-muted-foreground md:text-lg">
-                  {atmosfera.body}
-                </p>
+                <p className="text-muted-foreground md:text-lg">{atmosfera.body}</p>
               </Reveal>
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="container-page py-16 md:py-20">
-        <Reveal className="flex flex-wrap gap-3">
-          <Link
-            to="/menu"
-            className="motion-cta inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
-          >
-            Vai al menu
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/contatti"
-            className="motion-cta inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium hover:bg-secondary"
-          >
-            Contatti e mappa
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </Reveal>
       </section>
 
       <CTASection

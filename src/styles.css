@@ -201,13 +201,6 @@
   transform: translateY(0);
 }
 
-.menu-category:target .reveal {
-  opacity: 1;
-  transform: none;
-  transition: none;
-  transition-delay: 0ms !important;
-}
-
 .motion-cta {
   transform: translateY(0);
   transition-property: color, background-color, border-color, opacity, box-shadow, transform;

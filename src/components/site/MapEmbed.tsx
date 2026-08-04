@@ -1,12 +1,17 @@
-import { ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import { ExternalLink, MapPin } from "lucide-react";
 import { site } from "@/config/site";
 
-// Reusable responsive map embed with an accessible external-link fallback.
 export function MapEmbed() {
+  const [mapActive, setMapActive] = useState(false);
+
   return (
     <div className="max-w-full overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
-      <div className="relative min-w-0 max-w-full overflow-hidden">
-        <div className="relative min-h-[280px] min-w-0 max-w-full overflow-hidden sm:aspect-[16/10] md:aspect-[5/4] md:min-h-0">
+      <div
+        className="relative min-h-[280px] min-w-0 max-w-full overflow-hidden bg-secondary/35 sm:aspect-[16/10] md:aspect-[5/4] md:min-h-0"
+        aria-live="polite"
+      >
+        {mapActive ? (
           <iframe
             title={site.contact.mapTitle}
             src={site.contact.mapEmbedUrl}
@@ -15,27 +20,61 @@ export function MapEmbed() {
             allowFullScreen
             className="absolute inset-0 block h-full w-full max-w-full border-0"
           />
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-7 py-10 text-center sm:px-12">
+            <MapPin aria-hidden className="mb-4 h-8 w-8 text-terracotta" strokeWidth={1.5} />
+            <p className="font-display text-2xl leading-tight text-foreground sm:text-3xl">
+              {site.contact.area}
+            </p>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+              La mappa di Google viene caricata soltanto dopo una tua scelta esplicita.
+            </p>
+            <button
+              data-js-only
+              type="button"
+              onClick={() => setMapActive(true)}
+              className="motion-cta mt-7 inline-flex min-h-12 w-full max-w-xs items-center justify-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground hover:opacity-90 sm:w-auto"
+            >
+              Attiva la mappa interattiva
+            </button>
+            <noscript>
+              <a
+                href={site.contact.mapExternalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-7 inline-flex min-h-12 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground sm:w-auto"
+              >
+                Apri la mappa su Google Maps
+                <ExternalLink aria-hidden className="h-4 w-4" />
+              </a>
+            </noscript>
+          </div>
+        )}
+      </div>
+
+      <div className="flex min-w-0 flex-col gap-3 border-t border-border bg-card p-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <span className="min-w-0">{site.contact.locationLabel}</span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {mapActive && (
+            <button
+              type="button"
+              onClick={() => setMapActive(false)}
+              className="underline-offset-4 hover:underline"
+            >
+              Disattiva mappa
+            </button>
+          )}
+          <a
+            href={site.contact.mapExternalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 font-medium text-terracotta-ink underline-offset-4 hover:underline"
+          >
+            Apri su Google Maps
+            <ExternalLink aria-hidden className="h-3.5 w-3.5" />
+          </a>
         </div>
       </div>
-      <a
-        href={site.contact.mapExternalUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-t border-border bg-card p-4 transition hover:bg-secondary/60"
-      >
-        <span className="min-w-0">
-          <span className="block text-xs uppercase tracking-widest text-muted-foreground">
-            Come raggiungerci
-          </span>
-          <span className="mt-1 block truncate text-sm">
-            {site.contact.address}
-          </span>
-        </span>
-        <span className="inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-terracotta/10 px-3 py-1.5 text-xs font-medium text-terracotta-ink">
-          Apri su Maps
-          <ArrowUpRight className="h-3.5 w-3.5" />
-        </span>
-      </a>
     </div>
   );
 }

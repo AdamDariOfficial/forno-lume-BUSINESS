@@ -123,6 +123,9 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="it">
       <head>
         <HeadContent />
+        <noscript>
+          <style>{`[data-js-only] { display: none !important; }`}</style>
+        </noscript>
       </head>
       <body>
         {children}

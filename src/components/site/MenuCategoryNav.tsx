@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import type { MenuCategory } from "@/config/menu";
 
 type IndicatorGeometry = {
@@ -6,9 +6,8 @@ type IndicatorGeometry = {
   width: number;
 };
 
-// Sticky category selector: horizontally scrollable on mobile without
-// causing page-level overflow. Uses IntersectionObserver to track the
-// currently visible category and a shared underline to animate state changes.
+const INTERRUPT_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
+
 export function MenuCategoryNav({
   categories,
   offsetPx = 140,
@@ -22,6 +21,9 @@ export function MenuCategoryNav({
   const navListRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const didInitialScroll = useRef(false);
+  const viewportFrameRef = useRef<number | null>(null);
+  const viewportCleanupRef = useRef<(() => void) | null>(null);
+  const isProgrammaticScroll = useRef(false);
 
   const updateIndicator = useCallback(() => {
     const item = itemRefs.current.get(active);
@@ -36,6 +38,104 @@ export function MenuCategoryNav({
     });
   }, [active]);
 
+  const cancelViewportAnimation = useCallback(() => {
+    if (viewportFrameRef.current !== null) {
+      window.cancelAnimationFrame(viewportFrameRef.current);
+      viewportFrameRef.current = null;
+    }
+    viewportCleanupRef.current?.();
+    viewportCleanupRef.current = null;
+    isProgrammaticScroll.current = false;
+  }, []);
+
+  const animateViewportTo = useCallback(
+    (targetTop: number, id: string) => {
+      cancelViewportAnimation();
+
+      const hash = `#${id}`;
+      const commitHash = () => {
+        if (window.location.hash !== hash) {
+          window.history.pushState(null, "", hash);
+        }
+      };
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduced) {
+        window.scrollTo({ top: targetTop, behavior: "auto" });
+        setActive(id);
+        commitHash();
+        return;
+      }
+
+      const startTop = window.scrollY;
+      const distance = targetTop - startTop;
+      if (Math.abs(distance) < 1) {
+        setActive(id);
+        commitHash();
+        return;
+      }
+
+      const duration = Math.min(760, Math.max(440, Math.abs(distance) * 0.32));
+      const startedAt = window.performance.now();
+      isProgrammaticScroll.current = true;
+
+      const removeInterruptListeners = () => {
+        window.removeEventListener("wheel", cancelViewportAnimation);
+        window.removeEventListener("touchstart", cancelViewportAnimation);
+        window.removeEventListener("pointerdown", cancelViewportAnimation);
+        window.removeEventListener("keydown", handleInterruptKey);
+      };
+      const handleInterruptKey = (event: KeyboardEvent) => {
+        if (INTERRUPT_KEYS.has(event.key)) {
+          cancelViewportAnimation();
+        }
+      };
+
+      viewportCleanupRef.current = removeInterruptListeners;
+      window.addEventListener("wheel", cancelViewportAnimation, { passive: true });
+      window.addEventListener("touchstart", cancelViewportAnimation, { passive: true });
+      window.addEventListener("pointerdown", cancelViewportAnimation, { passive: true });
+      window.addEventListener("keydown", handleInterruptKey);
+
+      const step = (now: number) => {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        window.scrollTo(0, startTop + distance * eased);
+
+        if (progress < 1) {
+          viewportFrameRef.current = window.requestAnimationFrame(step);
+          return;
+        }
+
+        viewportFrameRef.current = null;
+        removeInterruptListeners();
+        viewportCleanupRef.current = null;
+        isProgrammaticScroll.current = false;
+        window.scrollTo({ top: targetTop, behavior: "auto" });
+        setActive(id);
+        commitHash();
+      };
+
+      viewportFrameRef.current = window.requestAnimationFrame(step);
+    },
+    [cancelViewportAnimation],
+  );
+
+  const handleCategoryClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>, id: string) => {
+      event.preventDefault();
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      setActive(id);
+      const top = target.getBoundingClientRect().top + window.scrollY - offsetPx;
+      animateViewportTo(Math.max(top, 0), id);
+    },
+    [animateViewportTo, offsetPx],
+  );
+
+  useEffect(() => cancelViewportAnimation, [cancelViewportAnimation]);
+
   useEffect(() => {
     const ids = categories.map((c) => c.id);
     const els = ids
@@ -45,6 +145,8 @@ export function MenuCategoryNav({
 
     const io = new IntersectionObserver(
       (entries) => {
+        if (isProgrammaticScroll.current) return;
+
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -128,12 +230,14 @@ export function MenuCategoryNav({
                 return (
                   <li key={c.id} className="shrink-0">
                     <a
-                      ref={(node) => {
+                      ref={(node: HTMLAnchorElement | null) => {
                         if (node) itemRefs.current.set(c.id, node);
                         else itemRefs.current.delete(c.id);
                       }}
                       href={`#${c.id}`}
-                      onClick={() => setActive(c.id)}
+                      onClick={(event: MouseEvent<HTMLAnchorElement>) =>
+                        handleCategoryClick(event, c.id)
+                      }
                       aria-current={isActive ? "true" : undefined}
                       className={`inline-flex min-h-11 items-center whitespace-nowrap text-sm transition-colors duration-300 ${
                         isActive

@@ -1,8 +1,8 @@
 import { menuTagLabels, type MenuCategory, type MenuTag } from "@/config/menu";
 import { Reveal } from "./Reveal";
 
-// Editorial menu category rendered as a two-column list on desktop.
-// Tags always include a text label; icons/glyphs never carry meaning alone.
+const rowDelay = (index: number) => Math.min(index * 70, 280);
+
 export function MenuCategorySection({ category }: { category: MenuCategory }) {
   return (
     <section
@@ -29,11 +29,13 @@ export function MenuCategorySection({ category }: { category: MenuCategory }) {
             </Reveal>
           )}
         </div>
-        <Reveal delay={160} className="md:col-span-8">
+        <div className="md:col-span-8">
           <ul className="divide-y divide-border/70">
-            {category.items.map((item) => (
-              <li
+            {category.items.map((item, index) => (
+              <Reveal
+                as="li"
                 key={item.id}
+                delay={rowDelay(index)}
                 className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-5 md:gap-8"
               >
                 <div className="min-w-0">
@@ -49,10 +51,10 @@ export function MenuCategorySection({ category }: { category: MenuCategory }) {
                 >
                   €{item.price}
                 </span>
-              </li>
+              </Reveal>
             ))}
           </ul>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -73,12 +75,16 @@ function TagList({ tags }: { tags: MenuTag[] }) {
   );
 }
 
-// Compact preview used on the homepage — single column, no category header.
 export function MenuPreviewList({ items }: { items: readonly import("@/config/menu").MenuItem[] }) {
   return (
     <ul className="divide-y divide-border/70">
-      {items.map((item) => (
-        <li key={item.id} className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-5">
+      {items.map((item, index) => (
+        <Reveal
+          as="li"
+          key={item.id}
+          delay={rowDelay(index)}
+          className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-5"
+        >
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <p className="font-display text-xl leading-tight">{item.name}</p>
@@ -92,7 +98,7 @@ export function MenuPreviewList({ items }: { items: readonly import("@/config/me
           >
             €{item.price}
           </span>
-        </li>
+        </Reveal>
       ))}
     </ul>
   );

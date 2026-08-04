@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-// Internal page hero with the same restrained entrance language as START:
-// one composed fade, rather than a mechanical stagger for every text element.
 export function PageHero({
   eyebrow,
   title,
@@ -26,9 +24,12 @@ export function PageHero({
         }}
       />
       <div className="container-page pb-14 pt-16 md:pb-20 md:pt-24">
-        <div className="fade-up">
-          <p className="eyebrow">{eyebrow}</p>
-          <h1 className="mt-5 max-w-3xl text-[2.4rem] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+        <div>
+          <p className="eyebrow fade-up">{eyebrow}</p>
+          <h1
+            className="fade-up mt-5 max-w-3xl text-[2.4rem] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl"
+            style={{ animationDelay: "80ms" }}
+          >
             {lines.map((line, index) => (
               <span key={index} className="block">
                 {line}
@@ -37,11 +38,18 @@ export function PageHero({
             ))}
           </h1>
           {subtitle && (
-            <p className="mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            <p
+              className="fade-up mt-6 max-w-2xl text-base text-muted-foreground md:text-lg"
+              style={{ animationDelay: "160ms" }}
+            >
               {subtitle}
             </p>
           )}
-          {children && <div className="mt-8">{children}</div>}
+          {children && (
+            <div className="fade-up mt-8" style={{ animationDelay: "240ms" }}>
+              {children}
+            </div>
+          )}
         </div>
       </div>
     </section>

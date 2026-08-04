@@ -23,22 +23,17 @@ export type SeoConfig = {
 export type WeeklyHour = {
   day: string;
   short: string;
-  label: string; // human label ("18:30 – 23:00" or "Chiuso")
+  label: string;
   closed?: boolean;
-  opens?: string; // "18:30" — for JSON-LD OpeningHoursSpecification
-  closes?: string; // "23:00"
-  dayOfWeek?:
-    | "Monday"
-    | "Tuesday"
-    | "Wednesday"
-    | "Thursday"
-    | "Friday"
-    | "Saturday"
-    | "Sunday";
+  opens?: string;
+  closes?: string;
+  dayOfWeek?: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
 };
 
+const mapQuery = "Prato della Valle, Padova";
+const encodedMapQuery = encodeURIComponent(mapQuery);
+
 export const site = {
-  // Absolute base URL used to build canonical/og:url/og:image.
   url: "https://forno-lume-business.tretnix.com",
 
   seo: {
@@ -60,26 +55,27 @@ export const site = {
   },
 
   contact: {
-    whatsappNumber: "+39 000 000 0000",
-    whatsappLink: "https://wa.me/390000000000",
-    whatsappReserveMessage:
-      "Ciao! Vorrei prenotare un tavolo da Forno Lume.",
-    whatsappMenuMessage:
-      "Ciao! Potreste inviarmi la proposta del menu di oggi?",
-    email: "info@fornolume.it",
-    phone: "+39 000 000 0000",
-    address: "Via Roma 24, Padova",
-    streetAddress: "Via Roma 24",
-    postalCode: "35100",
-    city: "Padova",
+    whatsappNumber: "+39 049 000 0000",
+    whatsappLink: "https://wa.me/390490000000",
+    whatsappReserveMessage: "Ciao! Vorrei prenotare un tavolo da Forno Lume.",
+    whatsappMenuMessage: "Ciao! Potreste inviarmi la proposta del menu di oggi?",
+    email: "info@fornolume.example",
+    phone: "+39 049 000 0000",
+    city: "Padova centro",
+    area: "Zona Prato della Valle",
+    locationLabel: "Padova centro · zona Prato della Valle",
+    locationDetail:
+      "Una zona centrale e facilmente raggiungibile. L'indirizzo esatto viene confermato al momento della prenotazione.",
+    address: "Padova centro · zona Prato della Valle",
+    streetAddress: "Zona Prato della Valle",
+    postalCode: "35123",
     region: "PD",
     country: "IT",
     hours: "Mar–Dom 18:30–23:00 · Lun chiuso",
-    mapTitle: "Mappa: Forno Lume — Via Roma 24, Padova",
-    mapEmbedUrl:
-      "https://www.google.com/maps?q=Via%20Roma%2024%2C%20Padova&output=embed",
-    mapExternalUrl:
-      "https://www.google.com/maps/search/?api=1&query=Via%20Roma%2024%2C%20Padova",
+    mapQuery,
+    mapTitle: "Mappa interattiva dell'area di Prato della Valle, Padova",
+    mapEmbedUrl: `https://www.google.com/maps?q=${encodedMapQuery}&z=15&output=embed`,
+    mapExternalUrl: `https://www.google.com/maps/search/?api=1&query=${encodedMapQuery}`,
   },
 
   mainNav: [
@@ -92,25 +88,72 @@ export const site = {
 
   primaryCta: {
     label: "Prenota un tavolo",
-    // "whatsapp" | "tel" — component decides how to render the link
     kind: "whatsapp" as const,
   },
 
   hoursWeekly: [
-    { day: "Lunedì",   short: "Lun", label: "Chiuso", closed: true, dayOfWeek: "Monday" },
-    { day: "Martedì",  short: "Mar", label: "18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Tuesday" },
-    { day: "Mercoledì",short: "Mer", label: "18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Wednesday" },
-    { day: "Giovedì",  short: "Gio", label: "18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Thursday" },
-    { day: "Venerdì",  short: "Ven", label: "18:30 – 23:30", opens: "18:30", closes: "23:30", dayOfWeek: "Friday" },
-    { day: "Sabato",   short: "Sab", label: "12:30 – 15:00 · 18:30 – 23:30", opens: "18:30", closes: "23:30", dayOfWeek: "Saturday" },
-    { day: "Domenica", short: "Dom", label: "12:30 – 15:00 · 18:30 – 23:00", opens: "18:30", closes: "23:00", dayOfWeek: "Sunday" },
+    {
+      day: "Lunedì",
+      short: "Lun",
+      label: "Chiuso",
+      closed: true,
+      dayOfWeek: "Monday",
+    },
+    {
+      day: "Martedì",
+      short: "Mar",
+      label: "18:30 – 23:00",
+      opens: "18:30",
+      closes: "23:00",
+      dayOfWeek: "Tuesday",
+    },
+    {
+      day: "Mercoledì",
+      short: "Mer",
+      label: "18:30 – 23:00",
+      opens: "18:30",
+      closes: "23:00",
+      dayOfWeek: "Wednesday",
+    },
+    {
+      day: "Giovedì",
+      short: "Gio",
+      label: "18:30 – 23:00",
+      opens: "18:30",
+      closes: "23:00",
+      dayOfWeek: "Thursday",
+    },
+    {
+      day: "Venerdì",
+      short: "Ven",
+      label: "18:30 – 23:30",
+      opens: "18:30",
+      closes: "23:30",
+      dayOfWeek: "Friday",
+    },
+    {
+      day: "Sabato",
+      short: "Sab",
+      label: "12:30 – 15:00 · 18:30 – 23:30",
+      opens: "18:30",
+      closes: "23:30",
+      dayOfWeek: "Saturday",
+    },
+    {
+      day: "Domenica",
+      short: "Dom",
+      label: "12:30 – 15:00 · 18:30 – 23:00",
+      opens: "18:30",
+      closes: "23:00",
+      dayOfWeek: "Sunday",
+    },
   ] satisfies readonly WeeklyHour[],
 
   social: [] as ReadonlyArray<{ label: string; href: string }>,
 
   legal: {
     company: "Forno Lume",
-    lastUpdate: "Gennaio 2026",
+    lastUpdate: "4 agosto 2026",
   },
 } as const;
 
