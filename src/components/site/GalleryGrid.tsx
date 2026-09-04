@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type MouseEvent } from "react";
 import type { GalleryImage } from "@/config/gallery";
 import { GalleryLightbox } from "./GalleryLightbox";
 import { Reveal } from "./Reveal";
@@ -28,11 +28,11 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
           >
             <button
               type="button"
-              onClick={(event) => {
+              onClick={(event: MouseEvent<HTMLButtonElement>) => {
                 openerRef.current = event.currentTarget;
                 setOpenIndex(i);
               }}
-              className="group relative block h-full w-full overflow-hidden rounded-2xl border border-border bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="group relative block h-full w-full overflow-hidden rounded-2xl border border-border bg-secondary/30 transition-[border-color,box-shadow] duration-300 hover:border-terracotta/45 hover:shadow-[var(--shadow-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
               aria-label={`Apri immagine: ${img.alt}`}
             >
               <img
@@ -41,7 +41,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 loading="lazy"
                 width={img.w}
                 height={img.h}
-                className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.018] motion-reduce:transform-none motion-reduce:transition-none"
               />
             </button>
           </Reveal>

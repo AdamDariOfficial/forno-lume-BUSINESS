@@ -202,7 +202,6 @@ function AboutPage() {
       </section>
 
       <CTASection
-        variant="soft"
         title="Vieni a trovarci."
         body="Un tavolo per due, un aperitivo al banco o una piccola cena tra amici: c'è spazio per te."
       />

@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
-import { site, primaryCtaHref } from "@/config/site";
-import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
+import { Menu, MessageCircle, X } from "lucide-react";
 
-// BUSINESS preserves START's perceived navbar behavior while keeping
-// route-based navigation and active states for the multipage architecture.
+import { site, type MainNavItem } from "@/config/site";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
+import { ContactChoiceDialog } from "./ContactChoiceDialog";
+import { HomeLogo } from "./HomeLogo";
+
+const mainNav: readonly MainNavItem[] = site.mainNav;
+
+// BUSINESS keeps START's perceived navbar and CTA behavior while preserving
+// route-based navigation, history and multipage active states.
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -18,6 +23,7 @@ export function Navbar() {
   const restoreFocusRef = useRef(false);
 
   const isHome = pathname === "/";
+  const navItems = mainNav;
 
   // Match START: hidden inside the hero and revealed as the first editorial
   // section approaches the viewport. Internal routes remain visible at once.
@@ -56,9 +62,10 @@ export function Navbar() {
     };
   }, [isHome]);
 
-  // Close the mobile dialog at the desktop breakpoint.
+  // START's final density breakpoint is also appropriate after restoring the
+  // full base interaction set plus BUSINESS route navigation.
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 768px)");
+    const media = window.matchMedia("(min-width: 1100px)");
     const onChange = (event: MediaQueryListEvent) => {
       if (!event.matches) return;
       restoreFocusRef.current = false;
@@ -69,13 +76,11 @@ export function Navbar() {
     return () => media.removeEventListener("change", onChange);
   }, []);
 
-  // Close the mobile dialog after route navigation.
   useEffect(() => {
     restoreFocusRef.current = false;
     setOpen(false);
   }, [pathname]);
 
-  // Reliable click-outside behavior, matching the corrected START menu.
   useEffect(() => {
     if (!open) return;
 
@@ -126,23 +131,18 @@ export function Navbar() {
       } motion-reduce:transition-opacity motion-reduce:transform-none`}
     >
       <div className="container-page flex h-16 items-center justify-between md:h-20">
-        <Link
-          to="/"
+        <HomeLogo
           inert={open}
-          onClick={() => close(false)}
-          className="flex items-center gap-2 font-display text-xl tracking-tight sm:text-2xl"
-          aria-label={`${site.brand.name} — Home`}
-        >
-          <span className="inline-block h-2 w-2 rounded-full bg-terracotta" />
-          {site.brand.name}
-        </Link>
+          onActivate={() => close(false)}
+          className="text-xl sm:text-2xl"
+        />
 
         <nav
           inert={open}
-          className="hidden items-center gap-8 md:flex"
+          className="hidden items-center gap-6 min-[1100px]:flex xl:gap-8"
           aria-label="Navigazione principale"
         >
-          {site.mainNav.map((item) => {
+          {navItems.map((item) => {
             const active = pathname === item.to;
             return (
               <Link
@@ -151,7 +151,7 @@ export function Navbar() {
                 activeOptions={item.to === "/" ? { exact: true } : undefined}
                 aria-current={active ? "page" : undefined}
                 className={`relative text-sm transition-colors ${
-                  active ? "text-terracotta-ink" : "text-foreground/80 hover:text-terracotta-ink"
+                  active ? "text-terracotta" : "text-foreground/80 hover:text-terracotta"
                 }`}
               >
                 {item.label}
@@ -166,15 +166,16 @@ export function Navbar() {
           })}
         </nav>
 
-        <a
-          href={primaryCtaHref()}
-          target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
-          rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
-          inert={open}
-          className="motion-cta hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 md:inline-flex"
-        >
-          {site.primaryCta.label}
-        </a>
+        <ContactChoiceDialog kind="booking">
+          <button
+            type="button"
+            inert={open}
+            className="motion-cta hidden items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 min-[1100px]:inline-flex"
+          >
+            <MessageCircle aria-hidden className="h-4 w-4" />
+            {site.primaryCta.label}
+          </button>
+        </ContactChoiceDialog>
 
         <button
           ref={menuTriggerRef}
@@ -191,7 +192,7 @@ export function Navbar() {
               setOpen(true);
             }
           }}
-          className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur md:hidden"
+          className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur transition-colors hover:bg-secondary min-[1100px]:hidden"
         >
           <Menu
             aria-hidden="true"
@@ -213,16 +214,16 @@ export function Navbar() {
         id="mobile-nav"
         aria-hidden={open ? undefined : true}
         inert={!open}
-        className={`absolute inset-x-0 top-full z-50 origin-top transition-all duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
+        className={`absolute inset-x-0 top-full z-50 origin-top transition-all duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] min-[1100px]:hidden ${
           open
-            ? "max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain opacity-100 translate-y-0"
+            ? "max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain opacity-100 translate-y-0 md:max-h-[calc(100dvh-5rem)]"
             : "max-h-0 overflow-hidden opacity-0 -translate-y-2"
         } motion-reduce:transition-none motion-reduce:transform-none`}
       >
         <div className="container-page pb-6 pt-2">
           <div className="rounded-2xl border border-border bg-card/95 p-4 shadow-[var(--shadow-soft)] backdrop-blur">
             <nav className="flex flex-col" aria-label="Navigazione mobile">
-              {site.mainNav.map((item, index) => {
+              {navItems.map((item, index) => {
                 const active = pathname === item.to;
                 return (
                   <Link
@@ -235,7 +236,7 @@ export function Navbar() {
                     style={{ transitionDelay: `${open ? index * 40 : 0}ms` }}
                     className={`flex items-center justify-between border-b border-border/60 py-4 text-base transition-all duration-300 last:border-b-0 ${
                       open ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
-                    } ${active ? "text-terracotta-ink" : ""}`}
+                    } ${active ? "text-terracotta" : "hover:text-terracotta"}`}
                   >
                     <span>{item.label}</span>
                     {active && (
@@ -245,15 +246,17 @@ export function Navbar() {
                 );
               })}
             </nav>
-            <a
-              href={primaryCtaHref()}
-              target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
-              rel={site.primaryCta.kind === "whatsapp" ? "noopener noreferrer" : undefined}
-              onClick={() => close(false)}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)]"
-            >
-              {site.primaryCta.label}
-            </a>
+
+            <ContactChoiceDialog kind="booking">
+              <button
+                type="button"
+                onClick={() => close(false)}
+                className="motion-cta mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-warm)]"
+              >
+                <MessageCircle aria-hidden className="h-4 w-4" />
+                {site.primaryCta.label}
+              </button>
+            </ContactChoiceDialog>
           </div>
         </div>
       </div>

@@ -1,9 +1,6 @@
 // Central configuration for the Forno Lume BUSINESS template (Tretnix).
-// Only global/brand-level data lives here. Editorial content lives in
-// dedicated files (home.ts, about.ts, menu.ts, gallery.ts, testimonials.ts,
-// pages.ts). Contact info, opening hours and navigation stay centralized so
-// the template can be rebranded for another Food/Hospitality client without
-// touching components.
+// BUSINESS preserves the approved START product base and extends it with
+// multipage content, richer navigation, SEO and additional detail surfaces.
 
 export type MainNavItem = {
   to: "/" | "/menu" | "/chi-siamo" | "/galleria" | "/contatti";
@@ -20,6 +17,22 @@ export type SeoConfig = {
   structuredData: StructuredDataConfig;
 };
 
+export type GoogleReview = {
+  author: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  text: string;
+  dateLabel?: string;
+  reviewUrl?: string;
+};
+
+export type GoogleReviewsConfig = {
+  enabled: boolean;
+  averageRating: number;
+  reviewCount: number;
+  profileUrl: string;
+  reviews: GoogleReview[];
+};
+
 export type WeeklyHour = {
   day: string;
   short: string;
@@ -27,7 +40,14 @@ export type WeeklyHour = {
   closed?: boolean;
   opens?: string;
   closes?: string;
-  dayOfWeek?: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+  dayOfWeek?:
+    | "Monday"
+    | "Tuesday"
+    | "Wednesday"
+    | "Thursday"
+    | "Friday"
+    | "Saturday"
+    | "Sunday";
 };
 
 const mapQuery = "Prato della Valle, Padova";
@@ -48,7 +68,7 @@ export const site = {
     name: "Forno Lume",
     tagline: "Cucina semplice, atmosfera calda, dettagli curati.",
     description:
-      "Forno Lume è un piccolo locale contemporaneo dove sapori autentici, ingredienti selezionati e accoglienza si incontrano in un'esperienza essenziale ma memorabile.",
+      "Cucina essenziale, ingredienti selezionati e un'atmosfera calda nel cuore di Padova.",
     shortDescription:
       "Bistrot e pizzeria contemporanea. Forno a legna, cucina di stagione, atmosfera calda.",
     kicker: "Bistrot · Pizzeria · Padova",
@@ -57,12 +77,14 @@ export const site = {
   contact: {
     whatsappNumber: "+39 049 000 0000",
     whatsappLink: "https://wa.me/390490000000",
-    whatsappReserveMessage: "Ciao! Vorrei prenotare un tavolo da Forno Lume.",
-    whatsappMenuMessage: "Ciao! Potreste inviarmi la proposta del menu di oggi?",
+    whatsappReserveMessage:
+      "Ciao! Vorrei prenotare un tavolo da Forno Lume.",
+    whatsappMenuMessage:
+      "Ciao! Potreste inviarmi la proposta del menu di oggi?",
     email: "info@fornolume.example",
     phone: "+39 049 000 0000",
     city: "Padova centro",
-    area: "Zona Prato della Valle",
+    area: "Prato della Valle",
     locationLabel: "Padova centro · zona Prato della Valle",
     locationDetail:
       "Una zona centrale e facilmente raggiungibile. L'indirizzo esatto viene confermato al momento della prenotazione.",
@@ -72,6 +94,8 @@ export const site = {
     region: "PD",
     country: "IT",
     hours: "Mar–Dom 18:30–23:00 · Lun chiuso",
+    hoursClosed: "Lun chiuso",
+    hoursOpen: "Mar–Dom 18:30–23:00",
     mapQuery,
     mapTitle: "Mappa interattiva dell'area di Prato della Valle, Padova",
     mapEmbedUrl: `https://www.google.com/maps?q=${encodedMapQuery}&z=15&output=embed`,
@@ -90,6 +114,106 @@ export const site = {
     label: "Prenota un tavolo",
     kind: "whatsapp" as const,
   },
+
+  offer: [
+    {
+      title: "Cucina di stagione",
+      body: "Piatti essenziali e ingredienti scelti, seguendo il ritmo delle stagioni.",
+      detail: "Materie prime locali",
+    },
+    {
+      title: "Pizza e lievitati",
+      body: "Impasti curati, cotture fragranti e abbinamenti semplici ma riconoscibili.",
+      detail: "Forno a legna",
+    },
+    {
+      title: "Aperitivi e serate",
+      body: "Un ambiente caldo per un calice, qualcosa da condividere e una serata senza fretta.",
+      detail: "Carta dei vini curata",
+    },
+  ],
+
+  menu: [
+    {
+      name: "Margherita del Forno",
+      desc: "Pomodoro San Marzano, fior di latte, basilico, olio EVO.",
+      price: "10",
+    },
+    {
+      name: "Burrata, pomodorini e basilico",
+      desc: "Burrata pugliese, datterino confit, foglie di basilico fresco.",
+      price: "12",
+    },
+    {
+      name: "Tagliere della casa",
+      desc: "Selezione di salumi e formaggi con mostarde e pane caldo.",
+      price: "16",
+    },
+    {
+      name: "Verdure arrostite e crema alle erbe",
+      desc: "Ortaggi di stagione al forno con emulsione di erbe fresche.",
+      price: "11",
+    },
+    {
+      name: "Dolce del giorno",
+      desc: "Preparazione artigianale, cambia con la stagione.",
+      price: "7",
+    },
+    {
+      name: "Calice selezione della casa",
+      desc: "Rossi, bianchi e bollicine dalla nostra carta rotante.",
+      price: "6",
+    },
+  ],
+
+  experience: [
+    {
+      step: "01",
+      title: "Scegli il momento",
+      body: "Cena, aperitivo o serata informale: scegli quando passare.",
+    },
+    {
+      step: "02",
+      title: "Prenota in un attimo",
+      body: "Scegli WhatsApp o telefono: confermiamo disponibilità e orario.",
+    },
+    {
+      step: "03",
+      title: "Vivi l'esperienza",
+      body: "Siediti e goditi cucina semplice, servizio attento e atmosfera calda.",
+    },
+  ],
+
+  googleReviews: {
+    enabled: false as boolean,
+    averageRating: 0,
+    reviewCount: 0,
+    profileUrl: "",
+    reviews: [] as GoogleReview[],
+  } as GoogleReviewsConfig,
+
+  faq: [
+    {
+      q: "È consigliata la prenotazione?",
+      a: "Sì, soprattutto nel weekend. Puoi prenotare via WhatsApp o telefono.",
+    },
+    {
+      q: "Fate anche asporto?",
+      a: "Sì, alcune proposte sono disponibili da asporto. Contattaci per la disponibilità del giorno.",
+    },
+    {
+      q: "Avete opzioni vegetariane?",
+      a: "Sì, ci sono proposte vegetariane e stagionali, variabili secondo gli ingredienti disponibili.",
+    },
+    {
+      q: "Posso organizzare una piccola cena di gruppo?",
+      a: "Sì, accogliamo piccoli gruppi su prenotazione. Contattaci in anticipo per organizzare tavoli e orari.",
+    },
+    {
+      q: "Come posso contattarvi?",
+      a: "Per informazioni puoi scegliere email o telefono; per prenotare, WhatsApp o telefono.",
+    },
+  ],
 
   hoursWeekly: [
     {
@@ -156,6 +280,36 @@ export const site = {
     lastUpdate: "4 agosto 2026",
   },
 } as const;
+
+export const googleReviewsPreview: GoogleReviewsConfig = {
+  enabled: true,
+  averageRating: 4.8,
+  reviewCount: 127,
+  profileUrl: "https://www.google.com/maps",
+  reviews: [
+    {
+      author: "Marco R.",
+      rating: 5,
+      text: "Impasto leggero, ingredienti curati e un'atmosfera davvero piacevole. Ci siamo fermati anche per un calice dopo cena e torneremo volentieri.",
+      dateLabel: "2 settimane fa",
+      reviewUrl: "https://www.google.com/maps",
+    },
+    {
+      author: "Giulia P.",
+      rating: 5,
+      text: "Locale raccolto e accogliente, servizio attento senza essere invadente. La pizza era fragrante e gli abbinamenti molto equilibrati.",
+      dateLabel: "1 mese fa",
+      reviewUrl: "https://www.google.com/maps",
+    },
+    {
+      author: "Andrea M.",
+      rating: 4,
+      text: "Una bella scoperta in centro: menu essenziale, materie prime ben scelte e tempi giusti. Perfetto per una cena tranquilla o un aperitivo lungo.",
+      dateLabel: "2 mesi fa",
+      reviewUrl: "https://www.google.com/maps",
+    },
+  ],
+};
 
 export const waLink = (message?: string) => {
   const base = site.contact.whatsappLink;

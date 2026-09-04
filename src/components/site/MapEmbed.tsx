@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
+
 import { site } from "@/config/site";
 
 export function MapEmbed() {
@@ -8,7 +9,7 @@ export function MapEmbed() {
   return (
     <div className="max-w-full overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
       <div
-        className="relative min-h-[280px] min-w-0 max-w-full overflow-hidden bg-secondary/35 sm:aspect-[16/10] md:aspect-[5/4] md:min-h-0"
+        className="relative min-h-[280px] min-w-0 max-w-full overflow-hidden bg-secondary/35 sm:aspect-[16/10] min-[1100px]:aspect-[5/4] min-[1100px]:min-h-0"
         aria-live="polite"
       >
         {mapActive ? (
@@ -42,7 +43,7 @@ export function MapEmbed() {
                 href={site.contact.mapExternalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-7 inline-flex min-h-12 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground sm:w-auto"
+                className="motion-cta mt-7 inline-flex min-h-12 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground hover:opacity-90 sm:w-auto"
               >
                 Apri la mappa su Google Maps
                 <ExternalLink aria-hidden className="h-4 w-4" />
@@ -52,28 +53,27 @@ export function MapEmbed() {
         )}
       </div>
 
-      <div className="flex min-w-0 flex-col gap-3 border-t border-border bg-card p-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <span className="min-w-0">{site.contact.locationLabel}</span>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <div className="flex min-w-0 items-center justify-between gap-4 border-t border-border bg-card p-4 text-xs text-muted-foreground">
+        <div className="min-w-0">
           {mapActive && (
             <button
               type="button"
               onClick={() => setMapActive(false)}
-              className="underline-offset-4 hover:underline"
+              className="rounded-sm underline-offset-4 transition-colors hover:text-terracotta hover:underline"
             >
               Disattiva mappa
             </button>
           )}
-          <a
-            href={site.contact.mapExternalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-medium text-terracotta-ink underline-offset-4 hover:underline"
-          >
-            Apri su Google Maps
-            <ExternalLink aria-hidden className="h-3.5 w-3.5" />
-          </a>
         </div>
+        <a
+          href={site.contact.mapExternalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-sm font-medium text-terracotta underline-offset-4 hover:underline"
+        >
+          Apri su Google Maps
+          <ExternalLink aria-hidden className="h-3.5 w-3.5" />
+        </a>
       </div>
     </div>
   );
