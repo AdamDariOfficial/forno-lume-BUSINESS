@@ -1,5 +1,7 @@
-import { MessageCircle, Mail } from "lucide-react";
-import { site, waLink, mailLink, primaryCtaHref } from "@/config/site";
+import { Mail, MessageCircle } from "lucide-react";
+
+import { site, waLink } from "@/config/site";
+import { ContactChoiceDialog } from "./ContactChoiceDialog";
 import { Reveal } from "./Reveal";
 
 type Props = {
@@ -8,6 +10,7 @@ type Props = {
   accent?: string;
   body?: string;
   variant?: "dark" | "soft";
+  spacing?: "default" | "home";
 };
 
 export function CTASection({
@@ -16,12 +19,22 @@ export function CTASection({
   accent,
   body,
   variant = "dark",
+  spacing = "default",
 }: Props) {
   const isDark = variant === "dark";
+  const isHomeSpacing = spacing === "home";
+  const sectionSpacing = isHomeSpacing
+    ? "pt-12 pb-14 md:pt-16 md:pb-20 min-[1100px]:pt-20"
+    : "py-20 md:py-28";
+  const cardPadding = isHomeSpacing ? "p-7 sm:p-10 md:p-14" : "p-10 md:p-16";
+  const titleDelay = isHomeSpacing ? 70 : 80;
+  const bodyDelay = isHomeSpacing ? 140 : 160;
+  const actionsDelay = isHomeSpacing ? 210 : 240;
+
   return (
-    <section className="container-page py-20 md:py-28">
+    <section className={`container-page ${sectionSpacing}`}>
       <div
-        className={`relative overflow-hidden rounded-[2rem] border p-10 md:p-16 ${
+        className={`relative overflow-hidden rounded-[2rem] border ${cardPadding} ${
           isDark ? "border-border" : "border-border bg-secondary/40"
         }`}
         style={
@@ -52,7 +65,7 @@ export function CTASection({
               <span className="opacity-80">{eyebrow}</span>
             </p>
           </Reveal>
-          <Reveal delay={80} className="mt-4">
+          <Reveal delay={titleDelay} className="mt-4">
             <h2 className="text-4xl font-medium leading-[1.05] md:text-5xl">
               {title}
               {accent && (
@@ -73,7 +86,7 @@ export function CTASection({
             </h2>
           </Reveal>
           {body && (
-            <Reveal delay={160} className="mt-5">
+            <Reveal delay={bodyDelay} className="mt-5">
               <p
                 className={`max-w-lg text-base md:text-lg ${
                   isDark ? "opacity-85" : "text-muted-foreground"
@@ -83,35 +96,36 @@ export function CTASection({
               </p>
             </Reveal>
           )}
-          <Reveal delay={240} className="mt-8 flex flex-wrap gap-3">
-            <a
-              href={primaryCtaHref()}
-              target={site.primaryCta.kind === "whatsapp" ? "_blank" : undefined}
-              rel={
-                site.primaryCta.kind === "whatsapp"
-                  ? "noopener noreferrer"
-                  : undefined
-              }
-              className={`motion-cta inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium hover:opacity-90 ${
-                isDark
-                  ? "bg-background text-foreground"
-                  : "bg-primary text-primary-foreground shadow-[var(--shadow-warm)]"
-              }`}
-            >
-              <MessageCircle className="h-4 w-4" />
-              Scrivici su WhatsApp
-            </a>
-            <a
-              href={mailLink("Contatto Forno Lume")}
-              className={`motion-cta inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium ${
-                isDark
-                  ? "border border-white/25 text-primary-foreground hover:bg-white/10"
-                  : "border border-border bg-card hover:bg-secondary"
-              }`}
-            >
-              <Mail className="h-4 w-4" />
-              Contattaci via email
-            </a>
+          <Reveal delay={actionsDelay} className="mt-8">
+            <div className="flex flex-wrap gap-3">
+              <ContactChoiceDialog kind="booking">
+                <button
+                  type="button"
+                  className={`motion-cta inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium hover:opacity-90 ${
+                    isDark
+                      ? "bg-background text-foreground"
+                      : "bg-primary text-primary-foreground shadow-[var(--shadow-warm)]"
+                  }`}
+                >
+                  <MessageCircle aria-hidden className="h-4 w-4" />
+                  Prenota un tavolo
+                </button>
+              </ContactChoiceDialog>
+
+              <ContactChoiceDialog kind="contact">
+                <button
+                  type="button"
+                  className={`motion-cta inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium ${
+                    isDark
+                      ? "border border-white/25 text-primary-foreground hover:bg-white/10"
+                      : "border border-border bg-card hover:bg-secondary"
+                  }`}
+                >
+                  <Mail aria-hidden className="h-4 w-4" />
+                  Contattaci
+                </button>
+              </ContactChoiceDialog>
+            </div>
           </Reveal>
         </div>
       </div>
@@ -119,5 +133,5 @@ export function CTASection({
   );
 }
 
-// Convenience re-exports for named CTAs used across pages.
+// Compatibility helper used by existing route-level integrations.
 export const waHref = () => waLink(site.contact.whatsappReserveMessage);

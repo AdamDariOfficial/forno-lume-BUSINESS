@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import type { MenuCategory } from "@/config/menu";
 
-type IndicatorGeometry = {
-  left: number;
-  width: number;
-};
-
 const INTERRUPT_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
+
+const smoothStep = (progress: number) => 1 - Math.pow(1 - progress, 3);
 
 export function MenuCategoryNav({
   categories,
@@ -16,109 +13,129 @@ export function MenuCategoryNav({
   offsetPx?: number;
 }) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? "");
-  const [indicator, setIndicator] = useState<IndicatorGeometry | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
-  const navListRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
-  const didInitialScroll = useRef(false);
-  const viewportFrameRef = useRef<number | null>(null);
-  const viewportCleanupRef = useRef<(() => void) | null>(null);
-  const isProgrammaticScroll = useRef(false);
+  const rafRef = useRef<number | null>(null);
+  const scrollAnimationRef = useRef<number | null>(null);
+  const pendingTargetRef = useRef<string | null>(null);
 
-  const updateIndicator = useCallback(() => {
-    const item = itemRefs.current.get(active);
-    const list = navListRef.current;
-    if (!item || !list) return;
+  const getSections = useCallback(
+    () =>
+      categories
+        .map((category) => document.getElementById(category.id))
+        .filter((section): section is HTMLElement => section !== null),
+    [categories],
+  );
 
-    const itemRect = item.getBoundingClientRect();
-    const listRect = list.getBoundingClientRect();
-    setIndicator({
-      left: itemRect.left - listRect.left,
-      width: itemRect.width,
-    });
-  }, [active]);
+  const targetScrollTop = useCallback(
+    (target: HTMLElement) =>
+      Math.max(target.getBoundingClientRect().top + window.scrollY - offsetPx, 0),
+    [offsetPx],
+  );
 
-  const cancelViewportAnimation = useCallback(() => {
-    if (viewportFrameRef.current !== null) {
-      window.cancelAnimationFrame(viewportFrameRef.current);
-      viewportFrameRef.current = null;
+  const cancelScrollAnimation = useCallback(() => {
+    if (scrollAnimationRef.current !== null) {
+      window.cancelAnimationFrame(scrollAnimationRef.current);
+      scrollAnimationRef.current = null;
     }
-    viewportCleanupRef.current?.();
-    viewportCleanupRef.current = null;
-    isProgrammaticScroll.current = false;
   }, []);
 
-  const animateViewportTo = useCallback(
-    (targetTop: number, id: string) => {
-      cancelViewportAnimation();
-
-      const hash = `#${id}`;
-      const commitHash = () => {
-        if (window.location.hash !== hash) {
-          window.history.pushState(null, "", hash);
-        }
-      };
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      if (reduced) {
-        window.scrollTo({ top: targetTop, behavior: "auto" });
-        setActive(id);
-        commitHash();
-        return;
-      }
+  const animateScrollTo = useCallback(
+    (targetTop: number) => {
+      cancelScrollAnimation();
 
       const startTop = window.scrollY;
       const distance = targetTop - startTop;
-      if (Math.abs(distance) < 1) {
-        setActive(id);
-        commitHash();
+      if (Math.abs(distance) <= 2) {
+        window.scrollTo({ top: targetTop, behavior: "auto" });
         return;
       }
 
-      const duration = Math.min(760, Math.max(440, Math.abs(distance) * 0.32));
-      const startedAt = window.performance.now();
-      isProgrammaticScroll.current = true;
+      const duration = Math.min(700, Math.max(420, Math.abs(distance) * 0.35));
+      let startedAt: number | null = null;
 
-      const removeInterruptListeners = () => {
-        window.removeEventListener("wheel", cancelViewportAnimation);
-        window.removeEventListener("touchstart", cancelViewportAnimation);
-        window.removeEventListener("pointerdown", cancelViewportAnimation);
-        window.removeEventListener("keydown", handleInterruptKey);
-      };
-      const handleInterruptKey = (event: KeyboardEvent) => {
-        if (INTERRUPT_KEYS.has(event.key)) {
-          cancelViewportAnimation();
-        }
-      };
-
-      viewportCleanupRef.current = removeInterruptListeners;
-      window.addEventListener("wheel", cancelViewportAnimation, { passive: true });
-      window.addEventListener("touchstart", cancelViewportAnimation, { passive: true });
-      window.addEventListener("pointerdown", cancelViewportAnimation, { passive: true });
-      window.addEventListener("keydown", handleInterruptKey);
-
-      const step = (now: number) => {
-        const progress = Math.min((now - startedAt) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 4);
-        window.scrollTo(0, startTop + distance * eased);
+      const step = (timestamp: number) => {
+        if (startedAt === null) startedAt = timestamp;
+        const progress = Math.min((timestamp - startedAt) / duration, 1);
+        window.scrollTo({ top: startTop + distance * smoothStep(progress), behavior: "auto" });
 
         if (progress < 1) {
-          viewportFrameRef.current = window.requestAnimationFrame(step);
-          return;
+          scrollAnimationRef.current = window.requestAnimationFrame(step);
+        } else {
+          scrollAnimationRef.current = null;
         }
-
-        viewportFrameRef.current = null;
-        removeInterruptListeners();
-        viewportCleanupRef.current = null;
-        isProgrammaticScroll.current = false;
-        window.scrollTo({ top: targetTop, behavior: "auto" });
-        setActive(id);
-        commitHash();
       };
 
-      viewportFrameRef.current = window.requestAnimationFrame(step);
+      scrollAnimationRef.current = window.requestAnimationFrame(step);
     },
-    [cancelViewportAnimation],
+    [cancelScrollAnimation],
+  );
+
+  const computeActive = useCallback(() => {
+    rafRef.current = null;
+    const sections = getSections();
+    if (sections.length === 0) return;
+
+    const pendingId = pendingTargetRef.current;
+    if (pendingId) {
+      const pendingTarget = document.getElementById(pendingId);
+      if (pendingTarget) {
+        const desiredTop = targetScrollTop(pendingTarget);
+        const nearTarget = Math.abs(window.scrollY - desiredTop) <= 2;
+        const nearBottom =
+          window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+        const isLast = pendingId === sections.at(-1)?.id;
+
+        if (!nearTarget && !(nearBottom && isLast)) {
+          setActive((current) => (current === pendingId ? current : pendingId));
+          return;
+        }
+      }
+      pendingTargetRef.current = null;
+    }
+
+    const activationY = window.scrollY + offsetPx + 24;
+    let next = sections[0].id;
+
+    for (const section of sections) {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      if (sectionTop <= activationY) next = section.id;
+      else break;
+    }
+
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+      next = sections.at(-1)?.id ?? next;
+    }
+
+    setActive((current) => (current === next ? current : next));
+  }, [getSections, offsetPx, targetScrollTop]);
+
+  const requestActiveUpdate = useCallback(() => {
+    if (rafRef.current !== null) return;
+    rafRef.current = window.requestAnimationFrame(computeActive);
+  }, [computeActive]);
+
+  const clearPendingTarget = useCallback(() => {
+    pendingTargetRef.current = null;
+    cancelScrollAnimation();
+  }, [cancelScrollAnimation]);
+
+  const handleInterruptKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (INTERRUPT_KEYS.has(event.key)) clearPendingTarget();
+    },
+    [clearPendingTarget],
+  );
+
+  const scrollToCategory = useCallback(
+    (id: string) => {
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      cancelScrollAnimation();
+      window.scrollTo({ top: targetScrollTop(target), behavior: "auto" });
+    },
+    [cancelScrollAnimation, targetScrollTop],
   );
 
   const handleCategoryClick = useCallback(
@@ -127,82 +144,95 @@ export function MenuCategoryNav({
       const target = document.getElementById(id);
       if (!target) return;
 
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      pendingTargetRef.current = id;
       setActive(id);
-      const top = target.getBoundingClientRect().top + window.scrollY - offsetPx;
-      animateViewportTo(Math.max(top, 0), id);
+
+      if (window.location.hash !== `#${id}`) {
+        window.history.pushState(null, "", `#${id}`);
+      }
+
+      const targetTop = targetScrollTop(target);
+      if (reduced) {
+        cancelScrollAnimation();
+        window.scrollTo({ top: targetTop, behavior: "auto" });
+      } else {
+        animateScrollTo(targetTop);
+      }
     },
-    [animateViewportTo, offsetPx],
+    [animateScrollTo, cancelScrollAnimation, targetScrollTop],
   );
 
-  useEffect(() => cancelViewportAnimation, [cancelViewportAnimation]);
-
   useEffect(() => {
-    const ids = categories.map((c) => c.id);
-    const els = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => !!el);
-    if (els.length === 0) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (isProgrammaticScroll.current) return;
-
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]?.target.id) {
-          setActive(visible[0].target.id);
-        }
-      },
-      {
-        rootMargin: `-${offsetPx + 20}px 0px -60% 0px`,
-        threshold: 0,
-      },
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [categories, offsetPx]);
-
-  useEffect(() => {
-    if (!didInitialScroll.current) {
-      didInitialScroll.current = true;
-      return;
-    }
-    const el = itemRefs.current.get(active);
-    const container = listRef.current;
-    if (!el || !container) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const elRect = el.getBoundingClientRect();
-    const cRect = container.getBoundingClientRect();
-    const target =
-      container.scrollLeft + (elRect.left - cRect.left) - cRect.width / 2 + elRect.width / 2;
-    container.scrollTo({
-      left: Math.max(target, 0),
-      behavior: reduced ? "auto" : "smooth",
-    });
-  }, [active]);
-
-  useEffect(() => {
-    let frame = window.requestAnimationFrame(updateIndicator);
-    const list = navListRef.current;
-    const item = itemRefs.current.get(active);
-    const observer =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateIndicator) : null;
-
-    if (list) observer?.observe(list);
-    if (item) observer?.observe(item);
-    window.addEventListener("resize", updateIndicator);
-
-    void document.fonts?.ready.then(() => {
-      frame = window.requestAnimationFrame(updateIndicator);
-    });
+    computeActive();
+    window.addEventListener("scroll", requestActiveUpdate, { passive: true });
+    window.addEventListener("resize", requestActiveUpdate);
+    window.addEventListener("wheel", clearPendingTarget, { passive: true });
+    window.addEventListener("touchstart", clearPendingTarget, { passive: true });
+    window.addEventListener("pointerdown", clearPendingTarget, { passive: true });
+    window.addEventListener("keydown", handleInterruptKey);
 
     return () => {
-      window.cancelAnimationFrame(frame);
-      observer?.disconnect();
-      window.removeEventListener("resize", updateIndicator);
+      window.removeEventListener("scroll", requestActiveUpdate);
+      window.removeEventListener("resize", requestActiveUpdate);
+      window.removeEventListener("wheel", clearPendingTarget);
+      window.removeEventListener("touchstart", clearPendingTarget);
+      window.removeEventListener("pointerdown", clearPendingTarget);
+      window.removeEventListener("keydown", handleInterruptKey);
+      if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current);
+      cancelScrollAnimation();
     };
-  }, [active, updateIndicator]);
+  }, [cancelScrollAnimation, clearPendingTarget, computeActive, handleInterruptKey, requestActiveUpdate]);
+
+  useEffect(() => {
+    const syncFromLocation = () => {
+      const hashId = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+      if (!hashId || !categories.some((category) => category.id === hashId)) {
+        pendingTargetRef.current = null;
+        cancelScrollAnimation();
+        requestActiveUpdate();
+        return;
+      }
+
+      pendingTargetRef.current = null;
+      setActive(hashId);
+      window.requestAnimationFrame(() => scrollToCategory(hashId));
+    };
+
+    let innerInitialFrame: number | null = null;
+    const initialFrame = window.requestAnimationFrame(() => {
+      innerInitialFrame = window.requestAnimationFrame(syncFromLocation);
+    });
+
+    window.addEventListener("popstate", syncFromLocation);
+    window.addEventListener("hashchange", syncFromLocation);
+    return () => {
+      window.cancelAnimationFrame(initialFrame);
+      if (innerInitialFrame !== null) window.cancelAnimationFrame(innerInitialFrame);
+      window.removeEventListener("popstate", syncFromLocation);
+      window.removeEventListener("hashchange", syncFromLocation);
+    };
+  }, [cancelScrollAnimation, categories, requestActiveUpdate, scrollToCategory]);
+
+  useEffect(() => {
+    const item = itemRefs.current.get(active);
+    const container = listRef.current;
+    if (!item || !container || container.scrollWidth <= container.clientWidth + 1) return;
+
+    const itemRect = item.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const target =
+      container.scrollLeft +
+      (itemRect.left - containerRect.left) -
+      containerRect.width / 2 +
+      itemRect.width / 2;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    container.scrollTo({
+      left: Math.max(target, 0),
+      behavior: reduced || pendingTargetRef.current === null ? "auto" : "smooth",
+    });
+  }, [active]);
 
   return (
     <div className="sticky top-16 z-30 md:top-20">
@@ -221,46 +251,36 @@ export function MenuCategoryNav({
           style={{ scrollPaddingInline: "1.25rem" }}
         >
           <nav aria-label="Categorie del menu">
-            <ul
-              ref={navListRef}
-              className="relative flex w-max gap-6 px-5 py-1 md:mx-auto md:max-w-6xl md:gap-8 md:px-8"
-            >
-              {categories.map((c) => {
-                const isActive = c.id === active;
+            <ul className="flex w-max gap-6 px-5 py-1 md:mx-auto md:max-w-6xl md:gap-8 md:px-8">
+              {categories.map((category) => {
+                const isActive = category.id === active;
                 return (
-                  <li key={c.id} className="shrink-0">
+                  <li key={category.id} className="shrink-0">
                     <a
                       ref={(node: HTMLAnchorElement | null) => {
-                        if (node) itemRefs.current.set(c.id, node);
-                        else itemRefs.current.delete(c.id);
+                        if (node) itemRefs.current.set(category.id, node);
+                        else itemRefs.current.delete(category.id);
                       }}
-                      href={`#${c.id}`}
-                      onClick={(event: MouseEvent<HTMLAnchorElement>) =>
-                        handleCategoryClick(event, c.id)
-                      }
+                      href={`#${category.id}`}
+                      onClick={(event: MouseEvent<HTMLAnchorElement>) => handleCategoryClick(event, category.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`inline-flex min-h-11 items-center whitespace-nowrap text-sm transition-colors duration-300 ${
+                      className={`relative inline-flex min-h-11 items-center whitespace-nowrap text-sm transition-colors duration-200 ${
                         isActive
                           ? "text-terracotta-ink"
                           : "text-foreground/70 hover:text-terracotta-ink"
                       }`}
                     >
-                      {c.label}
+                      {category.label}
+                      <span
+                        aria-hidden
+                        className={`pointer-events-none absolute inset-x-0 bottom-1 h-0.5 origin-center rounded-full bg-terracotta transition-[opacity,transform] duration-200 motion-reduce:transition-none ${
+                          isActive ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+                        }`}
+                      />
                     </a>
                   </li>
                 );
               })}
-              <li
-                aria-hidden="true"
-                role="presentation"
-                className={`pointer-events-none absolute bottom-1 left-0 h-0.5 rounded-full bg-terracotta transition-[width,transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-                  indicator ? "opacity-100" : "opacity-0"
-                }`}
-                style={{
-                  width: indicator?.width ?? 0,
-                  transform: `translateX(${indicator?.left ?? 0}px)`,
-                }}
-              />
             </ul>
           </nav>
         </div>

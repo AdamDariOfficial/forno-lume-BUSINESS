@@ -3,9 +3,9 @@
 
 export const pagesMeta = {
   home: {
-    title: "Forno Lume | Bistrot e pizzeria contemporanea a Padova",
+    title: "Forno Lume | Bistrot e pizzeria a Padova",
     description:
-      "Un piccolo locale contemporaneo con forno a legna, cucina di stagione e atmosfera calda. Prenota su WhatsApp.",
+      "Cucina semplice, pizza e ingredienti selezionati in un bistrot contemporaneo a Padova. Scopri il menu e prenota il tuo tavolo.",
   },
   menu: {
     title: "Menu | Forno Lume",
