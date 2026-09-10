@@ -100,12 +100,14 @@ export function Footer() {
             <p>
               © {new Date().getFullYear()} {site.legal.company}. Tutti i diritti riservati.
             </p>
-            <Link className={footerLinkClass} to="/privacy">
-              Privacy
-            </Link>
-            <Link className={footerLinkClass} to="/cookie">
-              Cookie
-            </Link>
+            <span className="inline-flex shrink-0 items-center gap-x-4">
+              <Link className={footerLinkClass} to="/privacy">
+                Privacy
+              </Link>
+              <Link className={footerLinkClass} to="/cookie">
+                Cookie
+              </Link>
+            </span>
           </div>
 
           <p>

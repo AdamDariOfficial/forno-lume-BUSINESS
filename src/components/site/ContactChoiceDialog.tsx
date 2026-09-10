@@ -10,11 +10,43 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { mailLink, site, telLink, waLink } from "@/config/site";
+import {
+  mailLink,
+  site,
+  telLink,
+  waLink,
+  type ContactChannel,
+  type ContactIntent,
+} from "@/config/site";
 
 type ContactChoiceDialogProps = {
-  kind: "booking" | "contact";
+  kind: ContactIntent;
   children: ReactNode;
+};
+
+const channelContent: Record<
+  ContactChannel,
+  { label: string; detail: string; icon: typeof Phone; href: () => string; external?: boolean }
+> = {
+  whatsapp: {
+    label: "WhatsApp",
+    detail: "Scrivi ora",
+    icon: MessageCircle,
+    href: () => waLink(site.contact.whatsappReserveMessage),
+    external: true,
+  },
+  email: {
+    label: "Email",
+    detail: "Scrivi ora",
+    icon: Mail,
+    href: () => mailLink("Contatto Forno Lume"),
+  },
+  phone: {
+    label: "Telefono",
+    detail: "Chiama ora",
+    icon: Phone,
+    href: telLink,
+  },
 };
 
 export function ContactChoiceDialog({ kind, children }: ContactChoiceDialogProps) {
@@ -37,54 +69,33 @@ export function ContactChoiceDialog({ kind, children }: ContactChoiceDialogProps
         </DialogHeader>
 
         <div className="grid gap-3.5 sm:grid-cols-2">
-          {isBooking ? (
-            <DialogClose asChild>
-              <a
-                href={waLink(site.contact.whatsappReserveMessage)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="interactive-card group flex min-h-20 min-w-0 items-center gap-3 rounded-2xl border border-border bg-background p-4 sm:gap-4 sm:p-5"
-              >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
-                  <MessageCircle aria-hidden className="h-5 w-5" />
-                </span>
-                <span>
-                  <span className="block whitespace-nowrap font-medium text-foreground">WhatsApp</span>
-                  <span className="mt-0.5 block whitespace-nowrap text-xs text-muted-foreground">Scrivi ora</span>
-                </span>
-              </a>
-            </DialogClose>
-          ) : (
-            <DialogClose asChild>
-              <a
-                href={mailLink("Contatto Forno Lume")}
-                className="interactive-card group flex min-h-20 min-w-0 items-center gap-3 rounded-2xl border border-border bg-background p-4 sm:gap-4 sm:p-5"
-              >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
-                  <Mail aria-hidden className="h-5 w-5" />
-                </span>
-                <span>
-                  <span className="block whitespace-nowrap font-medium text-foreground">Email</span>
-                  <span className="mt-0.5 block whitespace-nowrap text-xs text-muted-foreground">Scrivi ora</span>
-                </span>
-              </a>
-            </DialogClose>
-          )}
+          {site.conversion[kind].map((channel) => {
+            const content = channelContent[channel];
+            const Icon = content.icon;
 
-          <DialogClose asChild>
-            <a
-              href={telLink()}
-              className="interactive-card group flex min-h-20 min-w-0 items-center gap-3 rounded-2xl border border-border bg-background p-4 sm:gap-4 sm:p-5"
-            >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
-                <Phone aria-hidden className="h-5 w-5" />
-              </span>
-              <span>
-                <span className="block whitespace-nowrap font-medium text-foreground">Telefono</span>
-                <span className="mt-0.5 block whitespace-nowrap text-xs text-muted-foreground">Chiama ora</span>
-              </span>
-            </a>
-          </DialogClose>
+            return (
+              <DialogClose asChild key={channel}>
+                <a
+                  href={content.href()}
+                  target={content.external ? "_blank" : undefined}
+                  rel={content.external ? "noopener noreferrer" : undefined}
+                  className="interactive-card group flex min-h-20 min-w-0 items-center gap-3 rounded-2xl border border-border bg-background p-4 sm:gap-4 sm:p-5"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta">
+                    <Icon aria-hidden className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block whitespace-nowrap font-medium text-foreground">
+                      {content.label}
+                    </span>
+                    <span className="mt-0.5 block whitespace-nowrap text-xs text-muted-foreground">
+                      {content.detail}
+                    </span>
+                  </span>
+                </a>
+              </DialogClose>
+            );
+          })}
         </div>
       </DialogContent>
     </Dialog>
