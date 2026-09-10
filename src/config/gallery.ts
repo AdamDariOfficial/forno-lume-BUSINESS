@@ -18,7 +18,20 @@ export type GalleryImage = {
   w: number;
   h: number;
   span?: "wide" | "tall" | "normal";
+  category: GalleryCategoryId;
 };
+
+export type GalleryCategoryId = "forno-cucina" | "piatti" | "sala" | "atmosfera";
+
+export type GalleryFilterId = "all" | GalleryCategoryId;
+
+export const galleryCategories: readonly { id: GalleryFilterId; label: string }[] = [
+  { id: "all", label: "Tutte" },
+  { id: "forno-cucina", label: "Forno e cucina" },
+  { id: "piatti", label: "Piatti" },
+  { id: "sala", label: "Sala" },
+  { id: "atmosfera", label: "Atmosfera" },
+];
 
 export const gallery: GalleryImage[] = [
   {
@@ -28,6 +41,7 @@ export const gallery: GalleryImage[] = [
     w: 1440,
     h: 1620,
     span: "tall",
+    category: "forno-cucina",
   },
   {
     id: "forno-lavoro",
@@ -36,6 +50,7 @@ export const gallery: GalleryImage[] = [
     w: 1600,
     h: 1200,
     span: "wide",
+    category: "forno-cucina",
   },
   {
     id: "impasto",
@@ -44,6 +59,7 @@ export const gallery: GalleryImage[] = [
     w: 1200,
     h: 1500,
     span: "normal",
+    category: "forno-cucina",
   },
   {
     id: "burrata",
@@ -52,6 +68,7 @@ export const gallery: GalleryImage[] = [
     w: 1400,
     h: 1400,
     span: "normal",
+    category: "piatti",
   },
   {
     id: "piatto-stagione",
@@ -60,6 +77,7 @@ export const gallery: GalleryImage[] = [
     w: 1400,
     h: 1400,
     span: "normal",
+    category: "piatti",
   },
   {
     id: "tavolo",
@@ -68,6 +86,7 @@ export const gallery: GalleryImage[] = [
     w: 1600,
     h: 1200,
     span: "wide",
+    category: "atmosfera",
   },
   {
     id: "calice",
@@ -76,6 +95,7 @@ export const gallery: GalleryImage[] = [
     w: 1200,
     h: 1500,
     span: "tall",
+    category: "atmosfera",
   },
   {
     id: "sala-luce",
@@ -84,6 +104,7 @@ export const gallery: GalleryImage[] = [
     w: 1600,
     h: 1200,
     span: "wide",
+    category: "sala",
   },
 ];
 

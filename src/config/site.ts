@@ -17,21 +17,45 @@ export type SeoConfig = {
   structuredData: StructuredDataConfig;
 };
 
-export type GoogleReview = {
+type ReviewBase = {
   author: string;
   rating: 1 | 2 | 3 | 4 | 5;
   text: string;
   dateLabel?: string;
+};
+
+export type DemoReview = ReviewBase & {
+  reviewUrl?: never;
+};
+
+export type AuthenticReview = ReviewBase & {
   reviewUrl?: string;
 };
 
-export type GoogleReviewsConfig = {
+export type DemoReviewsConfig = {
   enabled: boolean;
-  averageRating: number;
-  reviewCount: number;
-  profileUrl: string;
-  reviews: GoogleReview[];
+  mode: "demo";
+  platform?: never;
+  profileUrl?: never;
+  averageRating?: never;
+  reviewCount?: never;
+  reviews: readonly DemoReview[];
 };
+
+export type AuthenticReviewsConfig = {
+  enabled: boolean;
+  mode: "authentic";
+  platform?: string;
+  profileUrl?: string;
+  averageRating?: number;
+  reviewCount?: number;
+  reviews: readonly AuthenticReview[];
+};
+
+export type ReviewsConfig = DemoReviewsConfig | AuthenticReviewsConfig;
+
+export type ContactIntent = "booking" | "contact";
+export type ContactChannel = "whatsapp" | "email" | "phone";
 
 export type WeeklyHour = {
   day: string;
@@ -101,6 +125,11 @@ export const site = {
     mapEmbedUrl: `https://www.google.com/maps?q=${encodedMapQuery}&z=15&output=embed`,
     mapExternalUrl: `https://www.google.com/maps/search/?api=1&query=${encodedMapQuery}`,
   },
+
+  conversion: {
+    booking: ["whatsapp", "phone"],
+    contact: ["email", "phone"],
+  } satisfies Record<ContactIntent, readonly ContactChannel[]>,
 
   mainNav: [
     { to: "/", label: "Home" },
@@ -184,13 +213,30 @@ export const site = {
     },
   ],
 
-  googleReviews: {
-    enabled: false as boolean,
-    averageRating: 0,
-    reviewCount: 0,
-    profileUrl: "",
-    reviews: [] as GoogleReview[],
-  } as GoogleReviewsConfig,
+  reviews: {
+    enabled: true,
+    mode: "demo",
+    reviews: [
+      {
+        author: "M.R.",
+        rating: 5,
+        text: "Impasto leggero, ingredienti curati e un'atmosfera davvero piacevole. Ci siamo fermati anche per un calice dopo cena.",
+        dateLabel: "Contenuto dimostrativo",
+      },
+      {
+        author: "G.P.",
+        rating: 5,
+        text: "Locale raccolto e accogliente, servizio attento senza essere invadente. La pizza era fragrante e ben equilibrata.",
+        dateLabel: "Contenuto dimostrativo",
+      },
+      {
+        author: "A.M.",
+        rating: 4,
+        text: "Menu essenziale, materie prime ben scelte e tempi giusti. Un'atmosfera adatta a una cena tranquilla.",
+        dateLabel: "Contenuto dimostrativo",
+      },
+    ],
+  } satisfies ReviewsConfig,
 
   faq: [
     {
@@ -280,36 +326,6 @@ export const site = {
     lastUpdate: "4 agosto 2026",
   },
 } as const;
-
-export const googleReviewsPreview: GoogleReviewsConfig = {
-  enabled: true,
-  averageRating: 4.8,
-  reviewCount: 127,
-  profileUrl: "https://www.google.com/maps",
-  reviews: [
-    {
-      author: "Marco R.",
-      rating: 5,
-      text: "Impasto leggero, ingredienti curati e un'atmosfera davvero piacevole. Ci siamo fermati anche per un calice dopo cena e torneremo volentieri.",
-      dateLabel: "2 settimane fa",
-      reviewUrl: "https://www.google.com/maps",
-    },
-    {
-      author: "Giulia P.",
-      rating: 5,
-      text: "Locale raccolto e accogliente, servizio attento senza essere invadente. La pizza era fragrante e gli abbinamenti molto equilibrati.",
-      dateLabel: "1 mese fa",
-      reviewUrl: "https://www.google.com/maps",
-    },
-    {
-      author: "Andrea M.",
-      rating: 4,
-      text: "Una bella scoperta in centro: menu essenziale, materie prime ben scelte e tempi giusti. Perfetto per una cena tranquilla o un aperitivo lungo.",
-      dateLabel: "2 mesi fa",
-      reviewUrl: "https://www.google.com/maps",
-    },
-  ],
-};
 
 export const waLink = (message?: string) => {
   const base = site.contact.whatsappLink;

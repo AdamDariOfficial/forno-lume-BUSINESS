@@ -14,14 +14,14 @@ import {
   Star,
   Wine,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import heroImg from "@/assets/hero.jpg";
 import heroMobileImg from "@/assets/hero-mobile.jpg";
 import aboutImg from "@/assets/about.jpg";
 import dishImg from "@/assets/dish.jpg";
 
-import { googleReviewsPreview, site, mailLink, telLink } from "@/config/site";
+import { site, mailLink, telLink, type ReviewsConfig } from "@/config/site";
 import { homeContent } from "@/config/home";
 import { galleryPreview } from "@/config/gallery";
 import { pagesMeta } from "@/config/pages";
@@ -30,11 +30,12 @@ import { genericPageJsonLd, jsonLdScripts, seoLinks, seoMeta } from "@/lib/seo";
 import { HomeLayout } from "@/components/site/HomeLayout";
 import { Reveal } from "@/components/site/Reveal";
 import { SectionHeading } from "@/components/site/SectionHeading";
-import { GalleryPreviewGrid } from "@/components/site/GalleryGrid";
+import { GalleryPreviewRail } from "@/components/site/GalleryGrid";
 import { FAQAccordion } from "@/components/site/FAQAccordion";
 import { CTASection } from "@/components/site/CTASection";
 import { ContactChoiceDialog } from "@/components/site/ContactChoiceDialog";
 import { MapEmbed } from "@/components/site/MapEmbed";
+import { RevealDivider } from "@/components/site/RevealDivider";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -377,7 +378,8 @@ function AboutSection() {
               accogliere con semplicità.
             </p>
           </Reveal>
-          <div className="mt-8 grid grid-cols-2 gap-6 border-t border-border pt-6">
+          <div className="relative mt-8 grid grid-cols-2 gap-6 border-t border-transparent pt-6">
+            <RevealDivider className="inset-x-0 -top-px h-px bg-border" />
             <Reveal delay={160}>
               <p className="font-display text-3xl text-terracotta">01</p>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -455,7 +457,7 @@ function GalleryPreview() {
           </Reveal>
         </div>
         <div className="mt-10">
-          <GalleryPreviewGrid images={galleryPreview} />
+          <GalleryPreviewRail images={galleryPreview} />
         </div>
       </div>
     </section>
@@ -579,21 +581,16 @@ function FAQSection() {
   );
 }
 
-function ReviewsSection() {
-  const [previewEnabled, setPreviewEnabled] = useState(false);
-
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    setPreviewEnabled(new URLSearchParams(window.location.search).get("reviewsPreview") === "1");
-  }, []);
-
-  const config = previewEnabled ? googleReviewsPreview : site.googleReviews;
+function ReviewsSection({ config = site.reviews }: { config?: ReviewsConfig } = {}) {
   const reviews = config.reviews.slice(0, 3);
 
   if (!config.enabled || reviews.length === 0) return null;
 
-  const roundedAverage = Math.round(config.averageRating);
-  const hasSummary = config.averageRating > 0 || config.reviewCount > 0;
+  const authenticConfig = config.mode === "authentic" ? config : null;
+  const averageRating = authenticConfig?.averageRating ?? 0;
+  const reviewCount = authenticConfig?.reviewCount ?? 0;
+  const roundedAverage = Math.round(averageRating);
+  const hasSummary = averageRating > 0 || reviewCount > 0;
 
   return (
     <section
@@ -602,7 +599,9 @@ function ReviewsSection() {
     >
       <div className="grid gap-7 min-[1100px]:grid-cols-12 min-[1100px]:items-end">
         <Reveal className="max-w-2xl min-[1100px]:col-span-7">
-          <p className="eyebrow">Recensioni Google</p>
+          <p className="eyebrow">
+            {authenticConfig?.platform ? `Recensioni ${authenticConfig.platform}` : "Recensioni"}
+          </p>
           <h2 className="mt-4 text-4xl font-medium leading-[1.08] md:text-5xl">
             Le parole di chi
             <br />
@@ -613,11 +612,11 @@ function ReviewsSection() {
         {hasSummary && (
           <Reveal delay={80} className="min-[1100px]:col-span-5 min-[1100px]:justify-self-end">
             <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-2 rounded-full border border-border bg-card px-4 py-3 text-sm shadow-[var(--shadow-soft)]">
-              {config.averageRating > 0 && (
+              {averageRating > 0 && (
                 <>
                   <span
                     className="flex items-center gap-0.5 text-terracotta"
-                    aria-label={`${config.averageRating.toLocaleString("it-IT")} stelle su 5`}
+                    aria-label={`${averageRating.toLocaleString("it-IT")} stelle su 5`}
                   >
                     {Array.from({ length: 5 }, (_, index) => (
                       <Star
@@ -628,16 +627,16 @@ function ReviewsSection() {
                     ))}
                   </span>
                   <strong className="font-display text-lg font-medium text-foreground">
-                    {config.averageRating.toLocaleString("it-IT", {
+                    {averageRating.toLocaleString("it-IT", {
                       minimumFractionDigits: 1,
                       maximumFractionDigits: 1,
                     })}
                   </strong>
                 </>
               )}
-              {config.reviewCount > 0 && (
+              {reviewCount > 0 && (
                 <span className="text-muted-foreground">
-                  {config.reviewCount.toLocaleString("it-IT")} recensioni
+                  {reviewCount.toLocaleString("it-IT")} recensioni
                 </span>
               )}
             </div>
@@ -676,44 +675,43 @@ function ReviewsSection() {
                 “{review.text}”
               </blockquote>
 
-              <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6 text-sm">
+              <div className="relative mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-transparent pt-6 text-sm">
+                <RevealDivider className="inset-x-0 -top-px h-px bg-border" />
                 <div>
                   <p className="font-medium text-foreground">{review.author}</p>
                   {review.dateLabel && (
                     <p className="mt-1 text-xs text-muted-foreground">{review.dateLabel}</p>
                   )}
                 </div>
-                {review.reviewUrl ? (
-                  <a
-                    href={review.reviewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center gap-1.5 rounded-sm px-1 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-terracotta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    aria-label={`Apri la recensione di ${review.author} su Google`}
-                  >
-                    Google
-                    <ExternalLink aria-hidden className="h-3.5 w-3.5" />
-                  </a>
-                ) : (
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Google
-                  </span>
-                )}
+                {config.mode === "authentic" &&
+                  "reviewUrl" in review &&
+                  review.reviewUrl && (
+                    <a
+                      href={review.reviewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-sm px-1 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-terracotta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      aria-label={`Apri la recensione di ${review.author}${config.platform ? ` su ${config.platform}` : " alla fonte"}`}
+                    >
+                      {config.platform ?? "Fonte"}
+                      <ExternalLink aria-hidden className="h-3.5 w-3.5" />
+                    </a>
+                  )}
               </div>
             </div>
           </Reveal>
         ))}
       </div>
 
-      {config.profileUrl && (
+      {authenticConfig?.profileUrl && (
         <Reveal delay={140} className="mt-8">
           <a
-            href={config.profileUrl}
+            href={authenticConfig.profileUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="motion-cta inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:border-terracotta/35 hover:text-terracotta"
           >
-            Vedi tutte le recensioni su Google
+            Vedi tutte le recensioni{authenticConfig.platform ? ` su ${authenticConfig.platform}` : ""}
             <ExternalLink aria-hidden className="h-4 w-4" />
           </a>
         </Reveal>
